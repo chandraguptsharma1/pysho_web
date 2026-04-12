@@ -1,117 +1,169 @@
 import Link from "next/link";
 
-const infoLinks = [
-    "About Us",
-    "Events",
-    "Distribution Partnership",
-    "Shipping & Return Policy",
-    "Privacy Policy",
-    "Terms & Conditions",
+const quickLinks = [
+    { label: "Home", href: "/" },
+    { label: "Products", href: "/products" },
+    { label: "Company Profile", href: "/about" },
+    { label: "Contact Us", href: "/contact" },
 ];
 
-const serviceLinks = [
-    "Trainings",
-    "Testimonials",
-    "Publish With Us",
-    "Journals",
-    "Careers",
-    "Returns",
+const productLinks = [
+    { label: "Mirror Drawing Apparatus", href: "/products" },
+    { label: "Bolt Head Maze", href: "/products" },
+    { label: "Tachistoscope", href: "/products" },
+    { label: "Muller Lyer Illusion", href: "/products" },
+    { label: "Steadiness Tester", href: "/products" },
+    { label: "Kohs Block Design Test", href: "/products" },
 ];
 
 export default function Footer() {
     return (
-        <footer className="overflow-x-hidden bg-[#eaf4f4] pt-16 text-slate-700">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-4">
-                    <div className="min-w-0">
-                        <h3 className="text-xl font-bold uppercase tracking-wide text-slate-900">
-                            Information
-                        </h3>
+        <footer className="border-t border-slate-200 bg-slate-900 text-white">
+            {/* Main footer */}
+            <div className="mx-auto max-w-6xl px-6 py-14 lg:px-10">
+                <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
 
-                        <ul className="mt-6 space-y-3">
-                            {infoLinks.map((item) => (
-                                <li key={item}>
+                    {/* Brand */}
+                    <div className="lg:col-span-1">
+                        <div className="mb-4 flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600">
+                                <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
+                                    <circle cx="11" cy="9" r="5" stroke="white" strokeWidth="1.5" fill="none" />
+                                    <path d="M7.5 9 C7.5 6.5 9 5 11 5" stroke="#93C5FD" strokeWidth="1.5" strokeLinecap="round" />
+                                    <circle cx="11" cy="9" r="2" fill="white" opacity="0.9" />
+                                    <path d="M11 14 L11 19" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                                    <path d="M8.5 17.5 L11 19 L13.5 17.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 className="text-[17px] font-bold leading-none">
+                                    <span className="text-blue-400">Psycho</span>
+                                    <span className="text-white">Scan</span>
+                                </h3>
+                                <p className="mt-0.5 text-[9px] font-medium uppercase tracking-[1.5px] text-slate-400">
+                                    Psychology Lab Equipment
+                                </p>
+                            </div>
+                        </div>
+                        <p className="mb-5 text-[13px] leading-relaxed text-slate-400">
+                            Manufacturer and supplier of quality psychological testing equipment for institutions across India since 1990s.
+                        </p>
+                        {/* GST badge */}
+                        <div className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-[11px] text-slate-400">
+                            <span className="text-emerald-400">✓</span>
+                            GST: 27ADZPN6741P1ZC
+                        </div>
+                    </div>
+
+                    {/* Quick Links */}
+                    <div>
+                        <h4 className="mb-5 text-[12px] font-semibold uppercase tracking-[1.5px] text-slate-400">
+                            Quick Links
+                        </h4>
+                        <ul className="space-y-3">
+                            {quickLinks.map((l) => (
+                                <li key={l.label}>
                                     <Link
-                                        href="/"
-                                        className="break-words text-lg text-slate-600 transition hover:text-teal-600"
+                                        href={l.href}
+                                        className="text-[13px] text-slate-400 transition hover:text-blue-400"
                                     >
-                                        {item}
+                                        → {l.label}
                                     </Link>
                                 </li>
                             ))}
                         </ul>
                     </div>
 
-                    <div className="min-w-0">
-                        <h3 className="text-xl font-bold uppercase tracking-wide text-slate-900">
-                            Customer Service
-                        </h3>
-
-                        <ul className="mt-6 space-y-3">
-                            {serviceLinks.map((item) => (
-                                <li key={item}>
+                    {/* Products */}
+                    <div>
+                        <h4 className="mb-5 text-[12px] font-semibold uppercase tracking-[1.5px] text-slate-400">
+                            Popular Products
+                        </h4>
+                        <ul className="space-y-3">
+                            {productLinks.map((l) => (
+                                <li key={l.label}>
                                     <Link
-                                        href="/"
-                                        className="break-words text-lg text-slate-600 transition hover:text-teal-600"
+                                        href={l.href}
+                                        className="text-[13px] text-slate-400 transition hover:text-blue-400"
                                     >
-                                        {item}
+                                        → {l.label}
                                     </Link>
                                 </li>
                             ))}
                         </ul>
                     </div>
 
-                    <div className="min-w-0">
-                        <h3 className="text-xl font-bold uppercase tracking-wide text-slate-900">
-                            Support
-                        </h3>
-
-                        <ul className="mt-6 space-y-3">
+                    {/* Contact */}
+                    <div>
+                        <h4 className="mb-5 text-[12px] font-semibold uppercase tracking-[1.5px] text-slate-400">
+                            Contact Us
+                        </h4>
+                        <ul className="space-y-4">
+                            <li className="flex items-start gap-3 text-[13px] text-slate-400">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                                    <circle cx="12" cy="10" r="3" />
+                                </svg>
+                                Plot No 58, Laxminagar, Behind Yeshwant Mahavidyalay, Wardha – 442001, Maharashtra
+                            </li>
                             <li>
-                                <Link
-                                    href="/contact"
-                                    className="break-words text-lg text-slate-600 transition hover:text-teal-600"
+
+                                <a href="tel:08045816232"
+                                    className="flex items-center gap-3 text-[13px] text-slate-400 transition hover:text-blue-400"
                                 >
-                                    Contact Us
-                                </Link>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 011 1.18a2 2 0 012-2.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7 6.91a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
+                                    </svg>
+                                    080-4581-6232
+                                </a>
+                            </li>
+                            <li>
+
+                                <a href="mailto:psychoscan@gmail.com"
+                                    className="flex items-center gap-3 text-[13px] text-slate-400 transition hover:text-blue-400"
+                                >
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                        <polyline points="22,6 12,13 2,6" />
+                                    </svg>
+                                    psychoscan@gmail.com
+                                </a>
                             </li>
                         </ul>
+
+                        {/* Map link */}
+
+                        <a href="https://maps.google.com/?q=Wardha,Maharashtra"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-5 inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-[12px] font-medium text-slate-300 transition hover:border-blue-500 hover:text-blue-400"
+                        >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                                <circle cx="12" cy="10" r="3" />
+                            </svg>
+                            View on Google Maps
+                        </a>
                     </div>
+                </div >
+            </div >
 
-                    <div className="min-w-0">
-                        <div className="mb-6">
-                            <h2 className="break-words text-3xl font-extrabold tracking-tight sm:text-4xl">
-                                {/* <span className="text-green-600">PRASAD</span> */}
-                                <span className="text-purple-700">PSYCHO</span>
-                            </h2>
-                        </div>
-
-                        <div className="space-y-2 text-lg leading-8 text-slate-600">
-                            <p className="font-medium text-slate-700">PSYCHO PVT. LTD.</p>
-                            <p>B-97, Sector-67, Noida, UP -</p>
-                            <p>201301, INDIA</p>
-                        </div>
-
-                        <div className="mt-8 flex flex-wrap items-center gap-4">
-                            {["f", "x", "◎", "in"].map((item) => (
-                                <Link
-                                    key={item}
-                                    href="/"
-                                    className="flex h-11 w-11 items-center justify-center rounded-full border border-teal-500 text-base font-semibold text-teal-600 transition hover:bg-teal-500 hover:text-white"
-                                >
-                                    {item}
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mt-12 border-t border-slate-300 py-6 text-center">
-                    <p className="text-base text-slate-600">
-                        Copyright by Psycho Pvt Ltd @ 2024
+            {/* Bottom bar */}
+            < div className="border-t border-slate-800" >
+                <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4 lg:px-10">
+                    <p className="text-[12px] text-slate-500">
+                        © {new Date().getFullYear()} PsychoScan. All rights reserved. Wardha, Maharashtra, India.
                     </p>
+                    <div className="flex items-center gap-4 text-[12px] text-slate-500">
+                        <span className="flex items-center gap-1.5">
+                            <span className="text-emerald-400">✓</span> TradeIndia Trusted Seller
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <span className="text-emerald-400">✓</span> Quality Assured
+                        </span>
+                    </div>
                 </div>
-            </div>
-        </footer>
+            </div >
+        </footer >
     );
 }
