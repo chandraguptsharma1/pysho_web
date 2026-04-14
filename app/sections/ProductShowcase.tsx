@@ -156,24 +156,24 @@ export default function ProductShowcase() {
     };
 
     return (
-        <section className="bg-slate-50 py-16 border-y border-slate-200">
+        <section className="bg-slate-900 py-16 border-y border-slate-700">
             <div className="mx-auto max-w-6xl px-6 lg:px-10">
                 {/* Header */}
                 <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[2px] text-blue-700">
+                        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[2px] text-blue-400">
                             Our Products
                         </p>
-                        <h2 className="text-3xl font-bold text-slate-900">
+                        <h2 className="text-3xl font-bold text-white">
                             Psychology Lab Equipment
                         </h2>
-                        <p className="mt-2 text-[14px] text-slate-500">
+                        <p className="mt-2 text-[14px] text-slate-400">
                             50+ instruments for research, education &amp; clinical use
                         </p>
                     </div>
                     <Link
                         href="/products"
-                        className="rounded-xl border border-blue-200 bg-white px-5 py-2.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+                        className="rounded-xl border border-slate-600 bg-slate-800 px-5 py-2.5 text-sm font-semibold text-blue-400 transition hover:bg-slate-700 hover:border-blue-500"
                     >
                         View All Products →
                     </Link>
@@ -186,8 +186,8 @@ export default function ProductShowcase() {
                             key={cat}
                             onClick={() => handleCategory(cat)}
                             className={`rounded-full border px-4 py-1.5 text-[12px] font-500 transition-all ${activeCategory === cat
-                                ? "border-blue-700 bg-blue-700 text-white"
-                                : "border-slate-200 bg-white text-slate-500 hover:border-blue-300 hover:text-blue-700"
+                                ? "border-blue-500 bg-blue-600 text-white"
+                                : "border-slate-600 bg-slate-800 text-slate-400 hover:border-blue-500 hover:text-blue-400"
                                 }`}
                         >
                             {cat}
@@ -200,10 +200,10 @@ export default function ProductShowcase() {
                     {visible.map((p) => (
                         <div
                             key={p.name}
-                            className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-100"
+                            className="group overflow-hidden rounded-2xl border border-slate-700 bg-slate-800 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-900/40"
                         >
                             {/* Image area */}
-                            <div className="relative flex h-44 items-center justify-center bg-gradient-to-br from-blue-800 to-slate-900">
+                            <div className="relative flex h-44 items-center justify-center bg-gradient-to-br from-blue-900 to-slate-950">
                                 {p.icon}
                                 <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-semibold text-white ${p.badgeColor}`}>
                                     {p.badge}
@@ -212,23 +212,23 @@ export default function ProductShowcase() {
 
                             {/* Body */}
                             <div className="p-5">
-                                <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                                <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
                                     {p.category}
                                 </p>
-                                <h3 className="mb-2 text-[14px] font-bold text-slate-900 leading-snug">
+                                <h3 className="mb-2 text-[14px] font-bold text-white leading-snug">
                                     {p.name}
                                 </h3>
-                                <p className="mb-4 text-[12px] leading-relaxed text-slate-500">
+                                <p className="mb-4 text-[12px] leading-relaxed text-slate-400">
                                     {p.desc}
                                 </p>
                                 <div className="flex items-center justify-between">
                                     <Link
                                         href="/contact"
-                                        className="rounded-lg bg-blue-50 px-4 py-2 text-[12px] font-semibold text-blue-700 transition hover:bg-blue-100"
+                                        className="rounded-lg bg-blue-900/50 px-4 py-2 text-[12px] font-semibold text-blue-400 transition hover:bg-blue-800/60"
                                     >
                                         Send Inquiry
                                     </Link>
-                                    <span className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-600">
+                                    <span className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-400">
                                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                         In Stock
                                     </span>
@@ -246,7 +246,7 @@ export default function ProductShowcase() {
                                 <button
                                     key={i}
                                     onClick={() => setPage(i)}
-                                    className={`h-2 rounded-full transition-all ${i === page ? "w-6 bg-blue-700" : "w-2 bg-slate-300"
+                                    className={`h-2 rounded-full transition-all ${i === page ? "w-6 bg-blue-500" : "w-2 bg-slate-600"
                                         }`}
                                 />
                             ))}
@@ -255,7 +255,7 @@ export default function ProductShowcase() {
                             <button
                                 onClick={() => setPage((p) => Math.max(0, p - 1))}
                                 disabled={page === 0}
-                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-blue-300 hover:text-blue-700 disabled:opacity-40"
+                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-600 bg-slate-800 text-slate-400 transition hover:border-blue-500 hover:text-blue-400 disabled:opacity-40"
                             >
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <polyline points="15 18 9 12 15 6" />
@@ -264,7 +264,7 @@ export default function ProductShowcase() {
                             <button
                                 onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                                 disabled={page === totalPages - 1}
-                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-blue-300 hover:text-blue-700 disabled:opacity-40"
+                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-600 bg-slate-800 text-slate-400 transition hover:border-blue-500 hover:text-blue-400 disabled:opacity-40"
                             >
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <polyline points="9 18 15 12 9 6" />
