@@ -7,7 +7,7 @@ export default function Header() {
             {/* Top accent bar */}
             <div className="h-[3px] w-full bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-400" />
 
-            {/* Top info bar */}
+            {/* Top info bar — desktop only */}
             <div className="hidden border-b lg:block" style={{ borderColor: "#1a3050", backgroundColor: "#071020" }}>
                 <div className="mx-auto flex h-9 max-w-7xl items-center justify-between px-6 lg:px-10">
                     <div className="flex items-center gap-5">
@@ -35,7 +35,7 @@ export default function Header() {
                             { label: "LinkedIn", href: "#", d: "M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 6a2 2 0 100-4 2 2 0 000 4z" },
                         ].map((s) => (
                             <a key={s.label} href={s.href} aria-label={s.label}
-                                className="flex h-6 w-6 items-center justify-center rounded-full transition"
+                                className="flex h-6 w-6 items-center justify-center rounded-full"
                                 style={{ backgroundColor: "#1e3a5f" }}>
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="#7ab3e8">
                                     <path d={s.d} />
@@ -48,39 +48,35 @@ export default function Header() {
 
             {/* Main navbar */}
             <div className="border-b" style={{ borderColor: "#1a3050" }}>
-                <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6 lg:px-10">
+                <div className="mx-auto flex h-[60px] max-w-7xl items-center justify-between px-4 lg:h-[68px] lg:px-10">
 
-                    {/* Logo: icon + text */}
-                    <Link href="/" className="flex items-center gap-3 no-underline">
-                        {/* Cropped icon image — place in /public/logo-icon.png */}
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center gap-2.5 no-underline">
                         <Image
                             src="/logo-icon.png"
-                            alt="Vishwakarma PsyTech Labs Icon"
-                            width={52}
-                            height={52}
+                            alt="Vishwakarma PsyTech Labs"
+                            width={38}
+                            height={38}
                             className="object-contain"
                             priority
                         />
-                        {/* Company name text */}
                         <div className="flex flex-col justify-center">
-                            <div className="flex items-baseline gap-0 leading-none">
-                                <span className="text-[17px] font-bold tracking-tight text-white">
-                                    VISHWAKARMA
-                                </span>
+                            <span className="text-[14px] font-bold leading-none tracking-tight text-white lg:text-[17px]">
+                                VISHWAKARMA
+                            </span>
+                            <div className="flex items-center gap-1 mt-0.5">
+                                <span className="text-[11px] font-bold lg:text-[13px]" style={{ color: "#7c3aed" }}>—</span>
+                                <span className="text-[12px] font-bold lg:text-[14px]" style={{ color: "#7c3aed" }}>PsyTech</span>
+                                <span className="text-[12px] font-bold text-white lg:text-[14px]">Labs</span>
+                                <span className="text-[11px] font-bold lg:text-[13px]" style={{ color: "#7c3aed" }}>—</span>
                             </div>
-                            <div className="flex items-center gap-1.5 leading-none mt-0.5">
-                                <span className="text-[13px] font-bold" style={{ color: "#7c3aed" }}>—</span>
-                                <span className="text-[15px] font-bold" style={{ color: "#7c3aed" }}>PsyTech</span>
-                                <span className="text-[15px] font-bold text-white">Labs</span>
-                                <span className="text-[13px] font-bold" style={{ color: "#7c3aed" }}>—</span>
-                            </div>
-                            <p className="mt-0.5 text-[8.5px] font-medium uppercase tracking-[1.5px] text-slate-500">
+                            <p className="hidden text-[8px] font-medium uppercase tracking-[1.5px] text-slate-500 lg:block">
                                 Precision Tools for Psychology
                             </p>
                         </div>
                     </Link>
 
-                    {/* Nav links */}
+                    {/* Desktop nav */}
                     <nav className="hidden items-center gap-1 lg:flex">
                         {[
                             { label: "Home", href: "/" },
@@ -96,16 +92,33 @@ export default function Header() {
                         ))}
                     </nav>
 
-                    {/* CTA button */}
-                    <Link href="/contact"
-                        className="flex items-center gap-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-600"
-                        style={{ boxShadow: "0 4px 14px rgba(37,99,235,0.35)" }}>
-                        Get a Quote
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="22" y1="2" x2="11" y2="13" />
-                            <polygon points="22 2 15 22 11 13 2 9 22 2" fill="white" />
-                        </svg>
-                    </Link>
+                    {/* Right: CTA + mobile menu */}
+                    <div className="flex items-center gap-2">
+                        {/* CTA — compact on mobile */}
+                        <Link href="/contact"
+                            className="flex items-center gap-1.5 rounded-lg bg-blue-700 px-3 py-2 text-[12px] font-semibold text-white transition hover:bg-blue-600 lg:px-5 lg:py-2.5 lg:text-sm"
+                            style={{ boxShadow: "0 4px 14px rgba(37,99,235,0.35)" }}>
+                            <span className="hidden sm:inline">Get a Quote</span>
+                            <span className="sm:hidden">Quote</span>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13" />
+                                <polygon points="22 2 15 22 11 13 2 9 22 2" fill="white" />
+                            </svg>
+                        </Link>
+
+                        {/* Hamburger — mobile only */}
+                        <button
+                            className="flex h-9 w-9 items-center justify-center rounded-lg lg:hidden"
+                            style={{ backgroundColor: "#1e3a5f" }}
+                            aria-label="Open menu"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7ab3e8" strokeWidth="2" strokeLinecap="round">
+                                <line x1="3" y1="6" x2="21" y2="6" />
+                                <line x1="3" y1="12" x2="21" y2="12" />
+                                <line x1="3" y1="18" x2="21" y2="18" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
