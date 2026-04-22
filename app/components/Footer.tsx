@@ -25,7 +25,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
 
                     {/* ── Brand ── */}
-                    <div className="lg:col-span-1">
+                    <div className="lg:col-span-1 flex flex-col items-center text-center lg:items-start lg:text-left">
                         <div className="mb-4 flex items-center gap-3">
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#534AB7]">
                                 <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
@@ -52,7 +52,6 @@ export default function Footer() {
                             institutions across India since the 1990s.
                         </p>
 
-                        {/* GST badge */}
                         <div className="inline-flex items-center gap-2 rounded-lg border border-[#EEEDFE] bg-white px-3 py-2 text-[11px] text-slate-500">
                             <span className="text-emerald-500">✓</span>
                             GST: 27ADZPN6741P1ZC
@@ -60,7 +59,7 @@ export default function Footer() {
                     </div>
 
                     {/* ── Quick Links ── */}
-                    <div>
+                    <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
                         <h4 className="mb-5 text-[11px] font-bold uppercase tracking-[1.5px] text-[#534AB7]">
                             Quick Links
                         </h4>
@@ -79,7 +78,7 @@ export default function Footer() {
                     </div>
 
                     {/* ── Products ── */}
-                    <div>
+                    <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
                         <h4 className="mb-5 text-[11px] font-bold uppercase tracking-[1.5px] text-[#534AB7]">
                             Popular Products
                         </h4>
@@ -98,12 +97,12 @@ export default function Footer() {
                     </div>
 
                     {/* ── Contact ── */}
-                    <div>
+                    <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
                         <h4 className="mb-5 text-[11px] font-bold uppercase tracking-[1.5px] text-[#534AB7]">
                             Contact Us
                         </h4>
-                        <ul className="space-y-4">
-                            <li className="flex items-start gap-3 text-[13px] text-slate-500">
+                        <ul className="space-y-4 w-full">
+                            <li className="flex items-start justify-center lg:justify-start gap-3 text-[13px] text-slate-500">
                                 <svg
                                     width="16" height="16" viewBox="0 0 24 24" fill="none"
                                     stroke="#534AB7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
@@ -112,12 +111,12 @@ export default function Footer() {
                                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
                                     <circle cx="12" cy="10" r="3" />
                                 </svg>
-                                Plot No 58, Laxminagar, Behind Yeshwant Mahavidyalay, Wardha – 442001, Maharashtra
+                                <span>Plot No 58, Laxminagar, Behind Yeshwant Mahavidyalay, Wardha – 442001, Maharashtra</span>
                             </li>
 
-                            <li>
-                                <a
-                                    href="tel:08045816232"
+                            <li className="flex justify-center lg:justify-start">
+
+                                <a href="tel:08045816232"
                                     className="flex items-center gap-3 text-[13px] text-slate-500 transition-colors hover:text-[#534AB7]"
                                 >
                                     <svg
@@ -131,9 +130,9 @@ export default function Footer() {
                                 </a>
                             </li>
 
-                            <li>
-                                <a
-                                    href="mailto:psychoscan@gmail.com"
+                            <li className="flex justify-center lg:justify-start">
+
+                                <a href="mailto:psychoscan@gmail.com"
                                     className="flex items-center gap-3 text-[13px] text-slate-500 transition-colors hover:text-[#534AB7]"
                                 >
                                     <svg
@@ -149,9 +148,8 @@ export default function Footer() {
                             </li>
                         </ul>
 
-                        {/* Map link */}
-                        <a
-                            href="https://maps.google.com/?q=Wardha,Maharashtra"
+
+                        <a href="https://maps.google.com/?q=Wardha,Maharashtra"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="mt-5 inline-flex items-center gap-2 rounded-lg border border-[#EEEDFE] bg-white px-4 py-2 text-[12px] font-medium text-slate-500 transition-all hover:border-[#534AB7] hover:text-[#534AB7]"
@@ -167,12 +165,12 @@ export default function Footer() {
                         </a>
                     </div>
 
-                </div>
-            </div>
+                </div >
+            </div >
 
             {/* ── Bottom bar ── */}
-            <div className="border-t border-[#EEEDFE] bg-white">
-                <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4 lg:px-10">
+            < div className="border-t border-[#EEEDFE] bg-white" >
+                <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-6 py-4 text-center lg:flex-row lg:justify-between lg:text-left lg:px-10">
                     <p className="text-[12px] text-slate-400">
                         © {new Date().getFullYear()} PsychoScan. All rights reserved. Wardha, Maharashtra, India.
                     </p>
@@ -185,8 +183,8 @@ export default function Footer() {
                         </span>
                     </div>
                 </div>
-            </div>
+            </div >
 
-        </footer>
+        </footer >
     );
 }

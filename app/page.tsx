@@ -6,6 +6,7 @@ import LandingHero from "./components/LandingHero";
 import SpecializationSection from "./components/SpecializationSection";
 import AboutSection from "./sections/Aboutsection";
 import CTABand from "./sections/CTABand";
+import MostPopular from "./sections/MostPopular";
 import PopularProducts from "./sections/PopularProducts";
 import ProductShowcase from "./sections/ProductShowcase";
 import ProductSlider from "./sections/productSlider";
@@ -20,6 +21,7 @@ export default function Home() {
       <LandingHero />
       <ProductSlider />
       <AboutSection />
+      <MostPopular />
       {/* <WhoWeServe />
       <WhyChooseUs />
       <ProductShowcase />

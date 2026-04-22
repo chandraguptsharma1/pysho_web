@@ -1,7 +1,20 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+const navLinks = [
+    { label: "Home", href: "/" },
+    { label: "About Us", href: "/about" },
+    { label: "Products", href: "/products" },
+    { label: "Why Choose Us", href: "/why-us" },
+    { label: "Contact", href: "/contact" },
+];
+
 export default function Header() {
+    const [menuOpen, setMenuOpen] = useState(false);
+
     return (
         <header className="sticky top-0 z-50" style={{ backgroundColor: "#0a1628" }}>
             {/* Top accent bar */}
@@ -78,13 +91,7 @@ export default function Header() {
 
                     {/* Desktop nav */}
                     <nav className="hidden items-center gap-1 lg:flex">
-                        {[
-                            { label: "Home", href: "/" },
-                            { label: "About Us", href: "/about" },
-                            { label: "Products", href: "/products" },
-                            { label: "Why Choose Us", href: "/why-us" },
-                            { label: "Contact", href: "/contact" },
-                        ].map((item) => (
+                        {navLinks.map((item) => (
                             <Link key={item.href} href={item.href}
                                 className="rounded-lg px-4 py-2 text-sm font-medium text-slate-400 transition-all hover:bg-blue-900/40 hover:text-blue-400">
                                 {item.label}
@@ -92,9 +99,8 @@ export default function Header() {
                         ))}
                     </nav>
 
-                    {/* Right: CTA + mobile menu */}
+                    {/* Right: CTA + hamburger */}
                     <div className="flex items-center gap-2">
-                        {/* CTA — compact on mobile */}
                         <Link href="/contact"
                             className="flex items-center gap-1.5 rounded-lg bg-blue-700 px-3 py-2 text-[12px] font-semibold text-white transition hover:bg-blue-600 lg:px-5 lg:py-2.5 lg:text-sm"
                             style={{ boxShadow: "0 4px 14px rgba(37,99,235,0.35)" }}>
@@ -108,18 +114,77 @@ export default function Header() {
 
                         {/* Hamburger — mobile only */}
                         <button
-                            className="flex h-9 w-9 items-center justify-center rounded-lg lg:hidden"
-                            style={{ backgroundColor: "#1e3a5f" }}
-                            aria-label="Open menu"
+                            onClick={() => setMenuOpen((v) => !v)}
+                            className="flex h-9 w-9 items-center justify-center rounded-lg lg:hidden transition-colors"
+                            style={{ backgroundColor: menuOpen ? "#2a4a7f" : "#1e3a5f" }}
+                            aria-label={menuOpen ? "Close menu" : "Open menu"}
                         >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7ab3e8" strokeWidth="2" strokeLinecap="round">
-                                <line x1="3" y1="6" x2="21" y2="6" />
-                                <line x1="3" y1="12" x2="21" y2="12" />
-                                <line x1="3" y1="18" x2="21" y2="18" />
-                            </svg>
+                            {menuOpen ? (
+                                /* X icon */
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7ab3e8" strokeWidth="2.5" strokeLinecap="round">
+                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            ) : (
+                                /* Hamburger icon */
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7ab3e8" strokeWidth="2" strokeLinecap="round">
+                                    <line x1="3" y1="6" x2="21" y2="6" />
+                                    <line x1="3" y1="12" x2="21" y2="12" />
+                                    <line x1="3" y1="18" x2="21" y2="18" />
+                                </svg>
+                            )}
                         </button>
                     </div>
                 </div>
+            </div>
+
+            {/* ── Mobile dropdown menu ── */}
+            <div
+                className="lg:hidden overflow-hidden transition-all duration-300 ease-in-out"
+                style={{
+                    maxHeight: menuOpen ? "400px" : "0px",
+                    borderBottom: menuOpen ? "1px solid #1a3050" : "none",
+                    backgroundColor: "#071020",
+                }}
+            >
+                <nav className="flex flex-col px-4 py-3 gap-1">
+                    {navLinks.map((item, i) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setMenuOpen(false)}
+                            className="flex items-center gap-3 rounded-xl px-4 py-3 text-[14px] font-medium text-slate-400 transition-all hover:bg-blue-900/40 hover:text-blue-400"
+                            style={{
+                                animationDelay: `${i * 40}ms`,
+                            }}
+                        >
+                            <span className="text-blue-700 text-[10px]">▶</span>
+                            {item.label}
+                        </Link>
+                    ))}
+
+                    {/* Divider */}
+                    <div className="my-2 border-t" style={{ borderColor: "#1a3050" }} />
+
+                    {/* Contact info in menu */}
+                    <a href="tel:08045816232"
+                        className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-500 hover:text-blue-400 transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7ab3e8" strokeWidth="2" strokeLinecap="round">
+                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 011 1.18a2 2 0 012-2.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7 6.91a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
+                        </svg>
+                        +91 080-4581-6232
+                    </a>
+                    <a href="mailto:info@vishwakarmapsytech.com"
+                        className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-500 hover:text-blue-400 transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7ab3e8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" />
+                            <path d="M22 7L12 13 2 7" />
+                        </svg>
+                        info@vishwakarmapsytech.com
+                    </a>
+
+                    <div className="pb-2" />
+                </nav>
             </div>
         </header>
     );
