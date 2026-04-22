@@ -138,50 +138,38 @@ function useVisibleCount() {
 }
 
 /* ── 3D tilt hook ── */
-function useTilt(ref: React.RefObject<HTMLDivElement>, active: boolean) {
-    const frameRef = useRef<number>(0);
-    const mx = useRef(0);
-    const my = useRef(0);
-    const tx = useRef(0);
-    const ty = useRef(0);
-
+const useTilt = <T extends HTMLElement>(
+    ref: React.RefObject<T | null>,
+    active: boolean
+) => {
     useEffect(() => {
         const el = ref.current;
-        if (!el) return;
+        if (!el || !active) return;
 
-        const onMove = (e: MouseEvent) => {
-            const r = el.getBoundingClientRect();
-            mx.current = ((e.clientX - r.left) / r.width - 0.5) * 2;
-            my.current = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        const handleMove = (e: MouseEvent) => {
+            const rect = el.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const rotateX = ((y / rect.height) - 0.5) * -10;
+            const rotateY = ((x / rect.width) - 0.5) * 10;
+
+            el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
         };
 
-        const onLeave = () => {
-            mx.current = 0;
-            my.current = 0;
+        const handleLeave = () => {
+            el.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)";
         };
 
-        el.addEventListener("mousemove", onMove);
-        el.addEventListener("mouseleave", onLeave);
+        el.addEventListener("mousemove", handleMove);
+        el.addEventListener("mouseleave", handleLeave);
+
         return () => {
-            el.removeEventListener("mousemove", onMove);
-            el.removeEventListener("mouseleave", onLeave);
+            el.removeEventListener("mousemove", handleMove);
+            el.removeEventListener("mouseleave", handleLeave);
         };
-    }, [ref]);
-
-    useEffect(() => {
-        const MAX = active ? 14 : 0;
-        const tick = () => {
-            tx.current += (mx.current - tx.current) * 0.1;
-            ty.current += (my.current - ty.current) * 0.1;
-            if (ref.current) {
-                ref.current.style.transform = `perspective(800px) rotateY(${tx.current * MAX}deg) rotateX(${-ty.current * MAX}deg) scale3d(${active ? 1.03 : 1},${active ? 1.03 : 1},1)`;
-            }
-            frameRef.current = requestAnimationFrame(tick);
-        };
-        frameRef.current = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(frameRef.current);
-    }, [active, ref]);
-}
+    }, [ref, active]);
+};
 
 function ProductCard({
     p,
