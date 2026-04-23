@@ -65,7 +65,7 @@ export default function ProductsPage() {
 
     return (
         <main className="min-h-screen bg-slate-50">
-            <Header />
+
 
             {/* ── Hero ── */}
             <section className="relative overflow-hidden border-b border-slate-200 bg-white px-6 py-14 md:px-16">
@@ -203,7 +203,7 @@ export default function ProductsPage() {
                 </div>
             </div>
 
-            <Footer />
+
         </main>
     );
 }
