@@ -17,7 +17,7 @@ import WhyChooseUs from "./sections/WhyChooseUs";
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <Header />
+
       <LandingHero />
       <ProductSlider />
       <AboutSection />
@@ -31,7 +31,7 @@ export default function Home() {
       {/* <ProductSlider />
       <CategorySlider />
       <SpecializationSection /> */}
-      <Footer />
+
     </main>
   );
 }
