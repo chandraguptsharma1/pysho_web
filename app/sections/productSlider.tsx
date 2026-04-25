@@ -301,7 +301,6 @@ export default function ProductSlider() {
     const [current, setCurrent] = useState(0);
     const [cardWidth, setCardWidth] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
-    const autoRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const touchStartX = useRef<number | null>(null);
 
     const visibleCount = useVisibleCount();
@@ -332,33 +331,14 @@ export default function ProductSlider() {
         [MAX_SLIDE]
     );
 
-    const startAuto = useCallback(() => {
-        if (autoRef.current) clearInterval(autoRef.current);
-        autoRef.current = setInterval(
-            () => setCurrent((p) => (p >= MAX_SLIDE ? 0 : p + 1)),
-            4000
-        );
-    }, [MAX_SLIDE]);
-
-    const stopAuto = useCallback(() => {
-        if (autoRef.current) clearInterval(autoRef.current);
-    }, []);
-
-    useEffect(() => {
-        startAuto();
-        return stopAuto;
-    }, [startAuto, stopAuto]);
-
     const onTouchStart = (e: React.TouchEvent) => {
         touchStartX.current = e.touches[0].clientX;
-        stopAuto();
     };
     const onTouchEnd = (e: React.TouchEvent) => {
         if (touchStartX.current === null) return;
         const delta = touchStartX.current - e.changedTouches[0].clientX;
         if (Math.abs(delta) > 40) goTo(delta > 0 ? current + 1 : current - 1);
         touchStartX.current = null;
-        startAuto();
     };
 
     return (
@@ -381,9 +361,8 @@ export default function ProductSlider() {
             {/* Slider */}
             <div
                 ref={containerRef}
-                className="overflow-visible w-full"
-                onMouseEnter={stopAuto}
-                onMouseLeave={startAuto}
+                className="w-full overflow-hidden lg:overflow-visible"
+                style={{ touchAction: "pan-y" }}
                 onTouchStart={onTouchStart}
                 onTouchEnd={onTouchEnd}
             >
