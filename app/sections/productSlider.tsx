@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 const products = [
     {
         name: "Error Counter 6 Digits",
         badge: "Electronics",
-        price: "₹4,500",
+        price: "Rs. 4,500",
         img: "/product/Error_Counter_6_Digits.png",
         specs: [
             ["Shape", "Rectangle"],
@@ -21,7 +21,7 @@ const products = [
     {
         name: "Mirror Drawing Metal Star",
         badge: "Motor Skills",
-        price: "₹3,800",
+        price: "Rs. 3,800",
         img: "/product/Mirror_Drawing_Metal_Star_Electronics.png",
         specs: [
             ["Shape", "Star"],
@@ -35,7 +35,7 @@ const products = [
     {
         name: "Steadiness Tester",
         badge: "Fine Motor",
-        price: "₹5,200",
+        price: "Rs. 5,200",
         img: "/product/Steadiness_Tester.png",
         specs: [
             ["Shape", "Rectangle"],
@@ -49,7 +49,7 @@ const products = [
     {
         name: "Horizontal Vertical Illusion",
         badge: "Perception",
-        price: "₹2,100",
+        price: "Rs. 2,100",
         img: "/product/Horizontal_Vertical_Illusion.png",
         specs: [
             ["Type", "Visual"],
@@ -61,9 +61,9 @@ const products = [
         ],
     },
     {
-        name: "Personality & Psychosocial",
+        name: "Personality and Psychosocial",
         badge: "Assessment",
-        price: "₹1,800",
+        price: "Rs. 1,800",
         img: "/product/Self_Concept_Scale.png",
         specs: [
             ["Format", "Booklet"],
@@ -77,7 +77,7 @@ const products = [
     {
         name: "Rational Learning Apparatus",
         badge: "Cognition",
-        price: "₹7,000",
+        price: "Rs. 7,000",
         img: "/product/Rational_Learning_Apparatus.png",
         specs: [
             ["Shape", "Rectangle"],
@@ -91,12 +91,12 @@ const products = [
     {
         name: "Reaction Time Meter",
         badge: "Response",
-        price: "₹6,500",
+        price: "Rs. 6,500",
         img: "/product/Bolt_Head_Maze_with_Error_Counter.png",
         specs: [
             ["Shape", "Rectangle"],
             ["Material", "Metal"],
-            ["Precision", "±1 ms"],
+            ["Precision", "+/-1 ms"],
             ["Stimuli", "Audio+Visual"],
             ["Display", "Digital"],
             ["Warranty", "1 Year"],
@@ -105,7 +105,7 @@ const products = [
     {
         name: "Memory Drum Apparatus",
         badge: "Memory",
-        price: "₹8,200",
+        price: "Rs. 8,200",
         img: "/product/Personality_and_Psychosocial_Behaviour.png",
         specs: [
             ["Shape", "Drum"],
@@ -122,90 +122,90 @@ const GAP = 18;
 
 function useVisibleCount() {
     const [visible, setVisible] = useState(4);
+
     useEffect(() => {
         const update = () => {
-            const w = window.innerWidth;
-            if (w < 480) setVisible(1);
-            else if (w < 768) setVisible(2);
-            else if (w < 1024) setVisible(3);
+            const width = window.innerWidth;
+            if (width < 480) setVisible(1);
+            else if (width < 768) setVisible(2);
+            else if (width < 1024) setVisible(3);
             else setVisible(4);
         };
+
         update();
         window.addEventListener("resize", update);
         return () => window.removeEventListener("resize", update);
     }, []);
+
     return visible;
 }
 
-/* ── 3D tilt hook ── */
 const useTilt = <T extends HTMLElement>(
     ref: React.RefObject<T | null>,
     active: boolean
 ) => {
     useEffect(() => {
-        const el = ref.current;
-        if (!el || !active) return;
+        const element = ref.current;
+        if (!element || !active) return;
 
-        const handleMove = (e: MouseEvent) => {
-            const rect = el.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        const handleMove = (event: MouseEvent) => {
+            const rect = element.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
 
-            const rotateX = ((y / rect.height) - 0.5) * -10;
-            const rotateY = ((x / rect.width) - 0.5) * 10;
+            const rotateX = (y / rect.height - 0.5) * -10;
+            const rotateY = (x / rect.width - 0.5) * 10;
 
-            el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
         };
 
         const handleLeave = () => {
-            el.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)";
+            element.style.transform =
+                "perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)";
         };
 
-        el.addEventListener("mousemove", handleMove);
-        el.addEventListener("mouseleave", handleLeave);
+        element.addEventListener("mousemove", handleMove);
+        element.addEventListener("mouseleave", handleLeave);
 
         return () => {
-            el.removeEventListener("mousemove", handleMove);
-            el.removeEventListener("mouseleave", handleLeave);
+            element.removeEventListener("mousemove", handleMove);
+            element.removeEventListener("mouseleave", handleLeave);
         };
     }, [ref, active]);
 };
 
 function ProductCard({
-    p,
+    product,
     width,
     isMobile,
 }: {
-    p: (typeof products)[0];
+    product: (typeof products)[0];
     width: number;
     isMobile: boolean;
 }) {
     const [hovered, setHovered] = useState(false);
     const cardRef = useRef<HTMLDivElement>(null);
-    useTilt(cardRef, hovered);
 
-    const show = isMobile ? hovered : hovered;
+    useTilt(cardRef, hovered);
 
     return (
         <div
             ref={cardRef}
             className="relative flex-shrink-0 cursor-pointer"
-            style={{ width, height: 310, willChange: "transform" }}
+            style={{ width, height: 320, willChange: "transform" }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            onClick={() => isMobile && setHovered((v) => !v)}
+            onClick={() => isMobile && setHovered((value) => !value)}
         >
-            {/* ── Base card ── */}
             <div
-                className="w-full h-full bg-white rounded-2xl overflow-hidden transition-all duration-300"
+                className="h-full w-full overflow-hidden rounded-2xl bg-white transition-all duration-300"
                 style={{
-                    border: show ? "1.5px solid #AFA9EC" : "1.5px solid #e8eaf0",
-                    boxShadow: show
+                    border: hovered ? "1.5px solid #AFA9EC" : "1.5px solid #e8eaf0",
+                    boxShadow: hovered
                         ? "0 8px 32px rgba(83,74,183,0.13)"
                         : "0 1px 4px rgba(0,0,0,0.05)",
                 }}
             >
-                {/* Image */}
                 <div
                     className="flex items-center justify-center overflow-hidden"
                     style={{
@@ -213,83 +213,70 @@ function ProductCard({
                         background: "linear-gradient(145deg,#EEEDFE,#f5f4ff)",
                     }}
                 >
-                    <div className="relative w-full h-full">
+                    <div className="relative h-full w-full">
                         <Image
-                            src={p.img}
-                            alt={p.name}
+                            src={product.img}
+                            alt={product.name}
                             fill
-                            className={`object-contain p-5 transition-transform duration-500 ${show ? "scale-110" : "scale-100"}`}
+                            className={`object-contain p-5 transition-transform duration-500 ${hovered ? "scale-110" : "scale-100"}`}
                         />
                     </div>
                 </div>
 
-                {/* Name + badge */}
-                <div className="px-4 pt-3 pb-2 text-center" style={{ height: "45%" }}>
-                    <p className="text-sm font-bold text-slate-900 leading-snug line-clamp-2 mb-1">
-                        {p.name}
+                <div className="px-4 pb-2 pt-3 text-center" style={{ height: "45%" }}>
+                    <p className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-slate-900">
+                        {product.name}
                     </p>
-                    <span className="inline-block bg-[#EEEDFE] text-[#534AB7] text-[10px] font-bold px-3 py-0.5 rounded-full">
-                        {p.badge}
+                    <span className="inline-block rounded-full bg-[#EEEDFE] px-3 py-0.5 text-[10px] font-bold text-[#534AB7]">
+                        {product.badge}
                     </span>
-                    <p className="text-xs font-bold text-[#3C3489] mt-1">{p.price}</p>
+                    <p className="mt-1 text-xs font-bold text-[#3C3489]">{product.price}</p>
                     <p
-                        className={`text-[10px] mt-1 transition-colors duration-200 ${show ? "text-[#534AB7]" : "text-slate-300"}`}
+                        className={`mt-1 text-[10px] transition-colors duration-200 ${hovered ? "text-[#534AB7]" : "text-slate-300"}`}
                     >
-                        {isMobile ? "· tap to explore ·" : "· hover to explore ·"}
+                        {isMobile ? "Tap to explore" : "Hover to explore"}
                     </p>
                 </div>
             </div>
 
-            {/* ── Detail overlay — slides up from bottom, overlaps front card ── */}
             <div
-                className="absolute rounded-2xl flex flex-col overflow-hidden"
+                className="absolute bottom-0 left-[8%] z-50 flex w-[84%] flex-col overflow-hidden rounded-2xl border-2 border-[#534AB7] bg-white shadow-[0_-8px_32px_rgba(83,74,183,0.18)]"
                 style={{
-                    zIndex: 50,
-                    left: "8%",
-                    width: "84%",
-                    bottom: 0,
                     height: "54%",
-                    border: "2px solid #534AB7",
-                    boxShadow: "0 -8px 32px rgba(83,74,183,0.18)",
-                    background: "#fff",
+                    transform: hovered ? "translateY(0%)" : "translateY(108%)",
+                    opacity: hovered ? 1 : 0,
+                    pointerEvents: hovered ? "auto" : "none",
                     transition:
                         "transform 0.42s cubic-bezier(0.34,1.4,0.64,1), opacity 0.3s ease",
-                    transform: show ? "translateY(0%)" : "translateY(108%)",
-                    opacity: show ? 1 : 0,
-                    pointerEvents: show ? "auto" : "none",
                 }}
             >
-                {/* Purple accent top bar */}
                 <div className="h-[3px] w-full flex-shrink-0 bg-[#7F77DD]" />
 
-                {/* Header */}
-                <div className="flex items-center justify-between px-3 py-2 border-b border-[#f0effe] flex-shrink-0">
-                    <p className="text-[10px] font-bold text-slate-800 leading-snug truncate pr-2">
-                        {p.name}
+                <div className="flex flex-shrink-0 items-center justify-between border-b border-[#f0effe] px-3 py-2">
+                    <p className="truncate pr-2 text-[10px] font-bold leading-snug text-slate-800">
+                        {product.name}
                     </p>
-                    <span className="flex-shrink-0 bg-[#EEEDFE] text-[#3C3489] text-[9px] font-bold px-2 py-0.5 rounded-full">
-                        {p.badge}
+                    <span className="flex-shrink-0 rounded-full bg-[#EEEDFE] px-2 py-0.5 text-[9px] font-bold text-[#3C3489]">
+                        {product.badge}
                     </span>
                 </div>
 
-                {/* Spec grid — 3 rows × 2 cols */}
-                <div className="grid grid-cols-2 gap-1 px-2 py-2 flex-1 overflow-hidden">
-                    {p.specs.map(([label, val], j) => (
-                        <div key={j} className="bg-[#f8f7ff] rounded-lg px-2 py-1.5">
-                            <p className="text-[8px] text-slate-400 mb-0.5 leading-none">
+                <div className="grid flex-1 grid-cols-2 gap-1 overflow-hidden px-2 py-2">
+                    {product.specs.map(([label, value]) => (
+                        <div key={label} className="rounded-lg bg-[#f8f7ff] px-2 py-1.5">
+                            <p className="mb-0.5 text-[8px] leading-none text-slate-400">
                                 {label}
                             </p>
-                            <p className="text-[10px] font-bold text-[#3C3489] leading-snug">
-                                {val}
+                            <p className="text-[10px] font-bold leading-snug text-[#3C3489]">
+                                {value}
                             </p>
                         </div>
                     ))}
                 </div>
 
-                {/* CTA */}
-                <div className="px-2 pb-2 flex-shrink-0">
-                    <button className="w-full bg-[#534AB7] hover:bg-[#3C3489] active:scale-95 text-white text-[10px] font-bold py-2 rounded-xl transition-all duration-150 tracking-wide">
-                        Get a Quote →
+                <div className="flex-shrink-0 px-2 pb-2">
+                    <button className="w-full rounded-xl bg-[#534AB7] py-2 text-[10px] font-bold tracking-wide text-white transition-all duration-150 hover:bg-[#3C3489] active:scale-95">
+                        Get a Quote
                     </button>
                 </div>
             </div>
@@ -305,119 +292,143 @@ export default function ProductSlider() {
 
     const visibleCount = useVisibleCount();
     const isMobile = visibleCount === 1;
-    const MAX_SLIDE = Math.max(0, products.length - visibleCount);
-    const CARD_STEP = cardWidth + GAP;
+    const maxSlide = Math.max(0, products.length - visibleCount);
+    const cardStep = cardWidth + GAP;
+    const activeCurrent = Math.min(current, maxSlide);
 
     useEffect(() => {
-        const calc = () => {
+        const calculate = () => {
             if (!containerRef.current) return;
             const totalGaps = GAP * (visibleCount - 1);
             setCardWidth(
                 Math.floor((containerRef.current.offsetWidth - totalGaps) / visibleCount)
             );
         };
-        calc();
-        const ro = new ResizeObserver(calc);
-        if (containerRef.current) ro.observe(containerRef.current);
-        return () => ro.disconnect();
+
+        calculate();
+        const observer = new ResizeObserver(calculate);
+        if (containerRef.current) observer.observe(containerRef.current);
+
+        return () => observer.disconnect();
     }, [visibleCount]);
 
-    useEffect(() => {
-        setCurrent((c) => Math.min(c, MAX_SLIDE));
-    }, [MAX_SLIDE]);
-
     const goTo = useCallback(
-        (idx: number) => setCurrent(Math.max(0, Math.min(idx, MAX_SLIDE))),
-        [MAX_SLIDE]
+        (index: number) => setCurrent(Math.max(0, Math.min(index, maxSlide))),
+        [maxSlide]
     );
 
-    const onTouchStart = (e: React.TouchEvent) => {
-        touchStartX.current = e.touches[0].clientX;
+    const onTouchStart = (event: React.TouchEvent) => {
+        touchStartX.current = event.touches[0].clientX;
     };
-    const onTouchEnd = (e: React.TouchEvent) => {
+
+    const onTouchEnd = (event: React.TouchEvent) => {
         if (touchStartX.current === null) return;
-        const delta = touchStartX.current - e.changedTouches[0].clientX;
-        if (Math.abs(delta) > 40) goTo(delta > 0 ? current + 1 : current - 1);
+        const delta = touchStartX.current - event.changedTouches[0].clientX;
+        if (Math.abs(delta) > 40) {
+            goTo(delta > 0 ? activeCurrent + 1 : activeCurrent - 1);
+        }
         touchStartX.current = null;
     };
 
     return (
-        <section className="w-full py-14 px-4 sm:px-6 bg-white">
-            {/* Header */}
-            <div className="text-center mb-10">
-                <span className="inline-block bg-[#EEEDFE] text-[#3C3489] text-[11px] font-semibold tracking-widest px-4 py-1 rounded-full mb-3">
-                    PRECISION INSTRUMENTS
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
-                    Psychology Apparatus
-                </h2>
-                <p className="text-sm text-slate-500 max-w-xl mx-auto leading-relaxed">
-                    Psychoscan manufactures high-quality psychology lab equipment for
-                    education, research &amp; professional use — trusted by 500+
-                    institutions across India.
-                </p>
-            </div>
+        <section className="w-full bg-[#f4f7fb] px-4 py-16 sm:px-6 lg:px-10">
+            <div className="mx-auto max-w-7xl rounded-[28px] border border-slate-200/80 bg-white px-4 py-10 shadow-[0_18px_50px_rgba(15,23,42,0.06)] sm:px-6 lg:px-8 lg:py-12">
+                <div className="mb-10 text-center">
+                    <span className="mb-3 inline-block rounded-full bg-[#EEEDFE] px-4 py-1 text-[11px] font-semibold tracking-widest text-[#3C3489]">
+                        PRECISION INSTRUMENTS
+                    </span>
+                    <h2 className="mb-2 text-2xl font-bold text-slate-900 sm:text-3xl">
+                        Psychology Apparatus
+                    </h2>
+                    <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-500 sm:text-[15px]">
+                        Psychoscan manufactures high-quality psychology lab equipment for
+                        education, research and professional use, trusted by 500+
+                        institutions across India.
+                    </p>
+                </div>
 
-            {/* Slider */}
-            <div
-                ref={containerRef}
-                className="w-full overflow-hidden lg:overflow-visible"
-                style={{ touchAction: "pan-y" }}
-                onTouchStart={onTouchStart}
-                onTouchEnd={onTouchEnd}
-            >
-                {cardWidth > 0 && (
-                    <div
-                        className="flex"
-                        style={{
-                            gap: GAP,
-                            transform: `translateX(-${current * CARD_STEP}px)`,
-                            transition: "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
-                            paddingBottom: "2px",
-                        }}
+                <div
+                    ref={containerRef}
+                    className="w-full overflow-hidden lg:overflow-visible"
+                    style={{ touchAction: "pan-y" }}
+                    onTouchStart={onTouchStart}
+                    onTouchEnd={onTouchEnd}
+                >
+                    {cardWidth > 0 && (
+                        <div
+                            className="flex"
+                            style={{
+                                gap: GAP,
+                                transform: `translateX(-${activeCurrent * cardStep}px)`,
+                                transition: "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
+                                paddingBottom: "6px",
+                            }}
+                        >
+                            {products.map((product) => (
+                                <ProductCard
+                                    key={product.name}
+                                    product={product}
+                                    width={cardWidth}
+                                    isMobile={isMobile}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <div className="mt-10 flex items-center justify-center gap-4">
+                    <button
+                        onClick={() => goTo(activeCurrent - 1)}
+                        className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-[#534AB7] transition-all duration-200 hover:border-[#534AB7] hover:bg-[#534AB7] hover:text-white"
+                        aria-label="Previous products"
                     >
-                        {products.map((p, i) => (
-                            <ProductCard
-                                key={i}
-                                p={p}
-                                width={cardWidth}
-                                isMobile={isMobile}
+                        <svg
+                            viewBox="0 0 24 24"
+                            className="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.4"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="m15 18-6-6 6-6" />
+                        </svg>
+                    </button>
+
+                    <div className="flex items-center gap-1.5">
+                        {Array.from({ length: maxSlide + 1 }).map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => goTo(index)}
+                                className="h-1.5 rounded-full transition-all duration-300"
+                                style={{
+                                    width: index === activeCurrent ? 22 : 6,
+                                    background: index === activeCurrent ? "#534AB7" : "#DDD",
+                                    borderRadius: index === activeCurrent ? 3 : "50%",
+                                }}
+                                aria-label={`Go to product slide ${index + 1}`}
                             />
                         ))}
                     </div>
-                )}
-            </div>
 
-            {/* Navigation */}
-            <div className="flex items-center justify-center gap-4 mt-10">
-                <button
-                    onClick={() => goTo(current - 1)}
-                    className="w-10 h-10 rounded-full bg-white border border-slate-200 text-[#534AB7] flex items-center justify-center hover:bg-[#534AB7] hover:border-[#534AB7] hover:text-white transition-all duration-200 font-bold text-base"
-                >
-                    ←
-                </button>
-
-                <div className="flex gap-1.5 items-center">
-                    {Array.from({ length: MAX_SLIDE + 1 }).map((_, i) => (
-                        <button
-                            key={i}
-                            onClick={() => goTo(i)}
-                            className="h-1.5 rounded-full transition-all duration-300"
-                            style={{
-                                width: i === current ? 22 : 6,
-                                background: i === current ? "#534AB7" : "#DDD",
-                                borderRadius: i === current ? 3 : "50%",
-                            }}
-                        />
-                    ))}
+                    <button
+                        onClick={() => goTo(activeCurrent + 1)}
+                        className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-[#534AB7] transition-all duration-200 hover:border-[#534AB7] hover:bg-[#534AB7] hover:text-white"
+                        aria-label="Next products"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            className="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.4"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="m9 18 6-6-6-6" />
+                        </svg>
+                    </button>
                 </div>
-
-                <button
-                    onClick={() => goTo(current + 1)}
-                    className="w-10 h-10 rounded-full bg-white border border-slate-200 text-[#534AB7] flex items-center justify-center hover:bg-[#534AB7] hover:border-[#534AB7] hover:text-white transition-all duration-200 font-bold text-base"
-                >
-                    →
-                </button>
             </div>
         </section>
     );

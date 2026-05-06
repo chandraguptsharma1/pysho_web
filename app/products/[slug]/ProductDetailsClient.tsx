@@ -627,7 +627,7 @@ export default function ProductDetailsClient({ product }: Props) {
                                 <h2 className="mt-3 font-serif text-[24px] font-semibold leading-[1.2] tracking-tight md:text-[30px]">
                                     Bulk order or{" "}
                                     <em className="text-indigo-300">custom configuration?</em>{" "}
-                                    Let's talk.
+                                    Let&apos;s talk.
                                 </h2>
                                 <p className="mt-4 max-w-md text-[15px] leading-[1.75] text-gray-300">
                                     Fill the form and our team will get back to you within 24
