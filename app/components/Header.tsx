@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -12,8 +12,108 @@ const navLinks = [
     { label: "Contact", href: "/contact" },
 ];
 
+type TopbarSocialLink = {
+    platform: "facebook" | "linkedin";
+    label: string;
+    url: string;
+    isActive: boolean;
+};
+
+type SiteTopbar = {
+    email: string;
+    phone: string;
+    followLabel: string;
+    socialLinks: TopbarSocialLink[];
+    isActive: boolean;
+};
+
+type TopbarResponse = {
+    topbar?: Partial<SiteTopbar>;
+    topBar?: Partial<SiteTopbar>;
+    data?: {
+        topbar?: Partial<SiteTopbar>;
+        topBar?: Partial<SiteTopbar>;
+    };
+};
+
+const defaultTopbar: SiteTopbar = {
+    email: "info@vishwakarmapsytech.com",
+    phone: "+91 080-4581-6232",
+    followLabel: "Follow Us:",
+    socialLinks: [
+        { platform: "facebook", label: "Facebook", url: "#", isActive: true },
+        { platform: "linkedin", label: "LinkedIn", url: "#", isActive: true },
+    ],
+    isActive: true,
+};
+
+const socialIcons: Record<TopbarSocialLink["platform"], string> = {
+    facebook: "M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z",
+    linkedin: "M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 6a2 2 0 100-4 2 2 0 000 4z",
+};
+
+function getTopbarFromResponse(data: TopbarResponse): SiteTopbar {
+    const topbar = data.topbar || data.topBar || data.data?.topbar || data.data?.topBar;
+
+    if (!topbar) return defaultTopbar;
+
+    const socialLinks = defaultTopbar.socialLinks.map((fallback) => {
+        const match = topbar.socialLinks?.find((link) => link.platform === fallback.platform);
+        return {
+            ...fallback,
+            ...match,
+            platform: fallback.platform,
+            isActive: typeof match?.isActive === "boolean" ? match.isActive : fallback.isActive,
+        };
+    });
+
+    return {
+        ...defaultTopbar,
+        ...topbar,
+        socialLinks,
+        isActive: typeof topbar.isActive === "boolean" ? topbar.isActive : defaultTopbar.isActive,
+    };
+}
+
+function telHref(phone: string) {
+    const cleaned = phone.replace(/[^\d+]/g, "");
+    return cleaned ? `tel:${cleaned}` : "tel:08045816232";
+}
+
+function mailHref(email: string) {
+    return email ? `mailto:${email}` : "mailto:info@vishwakarmapsytech.com";
+}
+
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [topbar, setTopbar] = useState<SiteTopbar>(defaultTopbar);
+
+    useEffect(() => {
+        const controller = new AbortController();
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
+
+        async function loadTopbar() {
+            try {
+                const response = await fetch(`${baseUrl}/topbar`, {
+                    signal: controller.signal,
+                    cache: "no-store",
+                });
+
+                if (!response.ok) return;
+
+                const data = (await response.json()) as TopbarResponse;
+                setTopbar(getTopbarFromResponse(data));
+            } catch (error) {
+                if (error instanceof DOMException && error.name === "AbortError") return;
+            }
+        }
+
+        void loadTopbar();
+
+        return () => controller.abort();
+    }, []);
+
+    const activeSocialLinks = topbar.socialLinks.filter((link) => link.isActive);
 
     return (
         <header className="sticky top-0 z-50" style={{ backgroundColor: "#0a1628" }}>
@@ -21,43 +121,44 @@ export default function Header() {
             <div className="h-[3px] w-full bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-400" />
 
             {/* Top info bar — desktop only */}
+            {topbar.isActive && (
             <div className="hidden border-b lg:block" style={{ borderColor: "#1a3050", backgroundColor: "#071020" }}>
                 <div className="mx-auto flex h-9 max-w-7xl items-center justify-between px-6 lg:px-10">
                     <div className="flex items-center gap-5">
-                        <a href="mailto:info@vishwakarmapsytech.com"
+                        <a href={mailHref(topbar.email)}
                             className="flex items-center gap-1.5 text-[12px] text-slate-500 transition hover:text-blue-400">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <rect x="2" y="4" width="20" height="16" rx="2" />
                                 <path d="M22 7L12 13 2 7" />
                             </svg>
-                            info@vishwakarmapsytech.com
+                            {topbar.email}
                         </a>
                         <span className="text-slate-700">|</span>
-                        <a href="tel:08045816232"
+                        <a href={telHref(topbar.phone)}
                             className="flex items-center gap-1.5 text-[12px] text-slate-500 transition hover:text-blue-400">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                                 <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 011 1.18a2 2 0 012-2.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7 6.91a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
                             </svg>
-                            +91 080-4581-6232
+                            {topbar.phone}
                         </a>
                     </div>
                     <div className="flex items-center gap-3">
-                        <span className="text-[12px] text-slate-600">Follow Us:</span>
-                        {[
-                            { label: "Facebook", href: "#", d: "M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" },
-                            { label: "LinkedIn", href: "#", d: "M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 6a2 2 0 100-4 2 2 0 000 4z" },
-                        ].map((s) => (
-                            <a key={s.label} href={s.href} aria-label={s.label}
+                        <span className="text-[12px] text-slate-600">{topbar.followLabel}</span>
+                        {activeSocialLinks.map((s) => (
+                            <a key={s.platform} href={s.url || "#"} aria-label={s.label}
                                 className="flex h-6 w-6 items-center justify-center rounded-full"
+                                target={s.url && s.url !== "#" ? "_blank" : undefined}
+                                rel={s.url && s.url !== "#" ? "noopener noreferrer" : undefined}
                                 style={{ backgroundColor: "#1e3a5f" }}>
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="#7ab3e8">
-                                    <path d={s.d} />
+                                    <path d={socialIcons[s.platform]} />
                                 </svg>
                             </a>
                         ))}
                     </div>
                 </div>
             </div>
+            )}
 
             {/* Main navbar */}
             <div className="border-b" style={{ borderColor: "#1a3050" }}>
@@ -167,21 +268,25 @@ export default function Header() {
                     <div className="my-2 border-t" style={{ borderColor: "#1a3050" }} />
 
                     {/* Contact info in menu */}
-                    <a href="tel:08045816232"
-                        className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-500 hover:text-blue-400 transition-colors">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7ab3e8" strokeWidth="2" strokeLinecap="round">
-                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 011 1.18a2 2 0 012-2.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7 6.91a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
-                        </svg>
-                        +91 080-4581-6232
-                    </a>
-                    <a href="mailto:info@vishwakarmapsytech.com"
-                        className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-500 hover:text-blue-400 transition-colors">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7ab3e8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="2" y="4" width="20" height="16" rx="2" />
-                            <path d="M22 7L12 13 2 7" />
-                        </svg>
-                        info@vishwakarmapsytech.com
-                    </a>
+                    {topbar.isActive && (
+                        <>
+                            <a href={telHref(topbar.phone)}
+                                className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-500 hover:text-blue-400 transition-colors">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7ab3e8" strokeWidth="2" strokeLinecap="round">
+                                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 011 1.18a2 2 0 012-2.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7 6.91a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
+                                </svg>
+                                {topbar.phone}
+                            </a>
+                            <a href={mailHref(topbar.email)}
+                                className="flex items-center gap-3 px-4 py-2 text-[13px] text-slate-500 hover:text-blue-400 transition-colors">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7ab3e8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                                    <path d="M22 7L12 13 2 7" />
+                                </svg>
+                                {topbar.email}
+                            </a>
+                        </>
+                    )}
 
                     <div className="pb-2" />
                 </nav>
