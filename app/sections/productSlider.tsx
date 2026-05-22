@@ -2,121 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { fetchProductSlides, type ProductSlide } from "./services/productSlider.service";
 
-const products = [
-    {
-        name: "Error Counter 6 Digits",
-        badge: "Electronics",
-        price: "Rs. 4,500",
-        img: "/product/Error_Counter_6_Digits.png",
-        specs: [
-            ["Shape", "Rectangle"],
-            ["Material", "Metal"],
-            ["Display", "6-Digit LED"],
-            ["Condition", "New"],
-            ["Use", "Research"],
-            ["Warranty", "1 Year"],
-        ],
-    },
-    {
-        name: "Mirror Drawing Metal Star",
-        badge: "Motor Skills",
-        price: "Rs. 3,800",
-        img: "/product/Mirror_Drawing_Metal_Star_Electronics.png",
-        specs: [
-            ["Shape", "Star"],
-            ["Material", "Metal"],
-            ["Pattern", "6-Point"],
-            ["Condition", "New"],
-            ["Use", "Psychomotor"],
-            ["Warranty", "1 Year"],
-        ],
-    },
-    {
-        name: "Steadiness Tester",
-        badge: "Fine Motor",
-        price: "Rs. 5,200",
-        img: "/product/Steadiness_Tester.png",
-        specs: [
-            ["Shape", "Rectangle"],
-            ["Material", "Metal"],
-            ["Holes", "Multiple"],
-            ["Condition", "New"],
-            ["Use", "Fine Motor"],
-            ["Warranty", "1 Year"],
-        ],
-    },
-    {
-        name: "Horizontal Vertical Illusion",
-        badge: "Perception",
-        price: "Rs. 2,100",
-        img: "/product/Horizontal_Vertical_Illusion.png",
-        specs: [
-            ["Type", "Visual"],
-            ["Material", "Acrylic"],
-            ["Illusion", "H-V Effect"],
-            ["Condition", "New"],
-            ["Use", "Perception"],
-            ["Warranty", "1 Year"],
-        ],
-    },
-    {
-        name: "Personality and Psychosocial",
-        badge: "Assessment",
-        price: "Rs. 1,800",
-        img: "/product/Self_Concept_Scale.png",
-        specs: [
-            ["Format", "Booklet"],
-            ["Language", "English"],
-            ["Pages", "48"],
-            ["Condition", "New"],
-            ["Use", "Personality"],
-            ["Warranty", "6 Months"],
-        ],
-    },
-    {
-        name: "Rational Learning Apparatus",
-        badge: "Cognition",
-        price: "Rs. 7,000",
-        img: "/product/Rational_Learning_Apparatus.png",
-        specs: [
-            ["Shape", "Rectangle"],
-            ["Material", "Metal"],
-            ["Color", "Black"],
-            ["Application", "Lab"],
-            ["MOQ", "1 Unit"],
-            ["Warranty", "1 Year"],
-        ],
-    },
-    {
-        name: "Reaction Time Meter",
-        badge: "Response",
-        price: "Rs. 6,500",
-        img: "/product/Bolt_Head_Maze_with_Error_Counter.png",
-        specs: [
-            ["Shape", "Rectangle"],
-            ["Material", "Metal"],
-            ["Precision", "+/-1 ms"],
-            ["Stimuli", "Audio+Visual"],
-            ["Display", "Digital"],
-            ["Warranty", "1 Year"],
-        ],
-    },
-    {
-        name: "Memory Drum Apparatus",
-        badge: "Memory",
-        price: "Rs. 8,200",
-        img: "/product/Personality_and_Psychosocial_Behaviour.png",
-        specs: [
-            ["Shape", "Drum"],
-            ["Material", "Metal"],
-            ["Speed", "Adjustable"],
-            ["Drive", "Motor"],
-            ["Application", "Lab"],
-            ["Warranty", "1 Year"],
-        ],
-    },
-];
+const initialProducts: ProductSlide[] = [];
 
 const GAP = 18;
 
@@ -179,7 +68,7 @@ function ProductCard({
     width,
     isMobile,
 }: {
-    product: (typeof products)[0];
+    product: ProductSlide;
     width: number;
     isMobile: boolean;
 }) {
@@ -275,9 +164,40 @@ function ProductCard({
                 </div>
 
                 <div className="flex-shrink-0 px-2 pb-2">
-                    <button className="w-full rounded-xl bg-[#534AB7] py-2 text-[10px] font-bold tracking-wide text-white transition-all duration-150 hover:bg-[#3C3489] active:scale-95">
-                        Get a Quote
-                    </button>
+                    {product.ctaLink ? (
+                        <Link
+                            href={product.ctaLink}
+                            className="block w-full rounded-xl bg-[#534AB7] py-2 text-center text-[10px] font-bold tracking-wide text-white transition-all duration-150 hover:bg-[#3C3489] active:scale-95"
+                        >
+                            {product.ctaText}
+                        </Link>
+                    ) : (
+                        <button className="w-full rounded-xl bg-[#534AB7] py-2 text-[10px] font-bold tracking-wide text-white transition-all duration-150 hover:bg-[#3C3489] active:scale-95">
+                            {product.ctaText}
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Skeleton loader card
+function SkeletonCard({ width }: { width: number }) {
+    return (
+        <div
+            className="relative flex-shrink-0 rounded-2xl overflow-hidden"
+            style={{ width, height: 320 }}
+        >
+            <div className="h-full w-full rounded-2xl border border-[#e8eaf0] bg-white overflow-hidden">
+                <div
+                    className="animate-pulse bg-[#EEEDFE]"
+                    style={{ height: "55%" }}
+                />
+                <div className="px-4 pt-3 pb-2 space-y-2" style={{ height: "45%" }}>
+                    <div className="animate-pulse bg-slate-100 rounded h-4 w-3/4 mx-auto" />
+                    <div className="animate-pulse bg-[#EEEDFE] rounded-full h-4 w-1/3 mx-auto" />
+                    <div className="animate-pulse bg-slate-100 rounded h-3 w-1/4 mx-auto" />
                 </div>
             </div>
         </div>
@@ -287,6 +207,8 @@ function ProductCard({
 export default function ProductSlider() {
     const [current, setCurrent] = useState(0);
     const [cardWidth, setCardWidth] = useState(0);
+    const [products, setProducts] = useState<ProductSlide[]>(initialProducts);
+    const [loading, setLoading] = useState(true); // ← new
     const containerRef = useRef<HTMLDivElement>(null);
     const touchStartX = useRef<number | null>(null);
 
@@ -295,6 +217,23 @@ export default function ProductSlider() {
     const maxSlide = Math.max(0, products.length - visibleCount);
     const cardStep = cardWidth + GAP;
     const activeCurrent = Math.min(current, maxSlide);
+
+    useEffect(() => {
+        async function loadSlides() {
+            try {
+                setLoading(true); // ← new
+                const slides = await fetchProductSlides();
+                setProducts(slides);
+            } catch (error) {
+                console.error("Failed to load product slides:", error);
+                setProducts([]);
+            } finally {
+                setLoading(false); // ← new
+            }
+        }
+
+        loadSlides();
+    }, []);
 
     useEffect(() => {
         const calculate = () => {
@@ -310,7 +249,7 @@ export default function ProductSlider() {
         if (containerRef.current) observer.observe(containerRef.current);
 
         return () => observer.disconnect();
-    }, [visibleCount]);
+    }, [visibleCount, products.length]);
 
     const goTo = useCallback(
         (index: number) => setCurrent(Math.max(0, Math.min(index, maxSlide))),
@@ -347,88 +286,128 @@ export default function ProductSlider() {
                     </p>
                 </div>
 
-                <div
-                    ref={containerRef}
-                    className="w-full overflow-hidden lg:overflow-visible"
-                    style={{ touchAction: "pan-y" }}
-                    onTouchStart={onTouchStart}
-                    onTouchEnd={onTouchEnd}
-                >
-                    {cardWidth > 0 && (
+                {loading ? (
+                    // Skeleton loader — same layout as real cards
+                    <div
+                        ref={containerRef}
+                        className="w-full"
+                    >
                         <div
                             className="flex"
-                            style={{
-                                gap: GAP,
-                                transform: `translateX(-${activeCurrent * cardStep}px)`,
-                                transition: "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
-                                paddingBottom: "6px",
-                            }}
+                            style={{ gap: GAP }}
                         >
-                            {products.map((product) => (
-                                <ProductCard
-                                    key={product.name}
-                                    product={product}
-                                    width={cardWidth}
-                                    isMobile={isMobile}
+                            {Array.from({ length: visibleCount }).map((_, i) => (
+                                <SkeletonCard
+                                    key={i}
+                                    width={cardWidth > 0 ? cardWidth : 220}
                                 />
                             ))}
                         </div>
-                    )}
-                </div>
-
-                <div className="mt-10 flex items-center justify-center gap-4">
-                    <button
-                        onClick={() => goTo(activeCurrent - 1)}
-                        className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-[#534AB7] transition-all duration-200 hover:border-[#534AB7] hover:bg-[#534AB7] hover:text-white"
-                        aria-label="Previous products"
-                    >
-                        <svg
-                            viewBox="0 0 24 24"
-                            className="h-4 w-4"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.4"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="m15 18-6-6 6-6" />
-                        </svg>
-                    </button>
-
-                    <div className="flex items-center gap-1.5">
-                        {Array.from({ length: maxSlide + 1 }).map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => goTo(index)}
-                                className="h-1.5 rounded-full transition-all duration-300"
-                                style={{
-                                    width: index === activeCurrent ? 22 : 6,
-                                    background: index === activeCurrent ? "#534AB7" : "#DDD",
-                                    borderRadius: index === activeCurrent ? 3 : "50%",
-                                }}
-                                aria-label={`Go to product slide ${index + 1}`}
-                            />
-                        ))}
+                        {/* Fake pagination dots while loading */}
+                        <div className="mt-10 flex items-center justify-center gap-4">
+                            <div className="h-10 w-10 rounded-full bg-slate-100 animate-pulse" />
+                            <div className="flex gap-1.5">
+                                {Array.from({ length: 3 }).map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className="h-1.5 rounded-full bg-slate-200 animate-pulse"
+                                        style={{ width: i === 0 ? 22 : 6 }}
+                                    />
+                                ))}
+                            </div>
+                            <div className="h-10 w-10 rounded-full bg-slate-100 animate-pulse" />
+                        </div>
                     </div>
-
-                    <button
-                        onClick={() => goTo(activeCurrent + 1)}
-                        className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-[#534AB7] transition-all duration-200 hover:border-[#534AB7] hover:bg-[#534AB7] hover:text-white"
-                        aria-label="Next products"
-                    >
-                        <svg
-                            viewBox="0 0 24 24"
-                            className="h-4 w-4"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.4"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
+                ) : products.length > 0 ? (
+                    <>
+                        <div
+                            ref={containerRef}
+                            className="w-full overflow-hidden lg:overflow-visible"
+                            style={{ touchAction: "pan-y" }}
+                            onTouchStart={onTouchStart}
+                            onTouchEnd={onTouchEnd}
                         >
-                            <path d="m9 18 6-6-6-6" />
-                        </svg>
-                    </button>
-                </div>
+                            {cardWidth > 0 && (
+                                <div
+                                    className="flex"
+                                    style={{
+                                        gap: GAP,
+                                        transform: `translateX(-${activeCurrent * cardStep}px)`,
+                                        transition: "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
+                                        paddingBottom: "6px",
+                                    }}
+                                >
+                                    {products.map((product) => (
+                                        <ProductCard
+                                            key={product.id}
+                                            product={product}
+                                            width={cardWidth}
+                                            isMobile={isMobile}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="mt-10 flex items-center justify-center gap-4">
+                            <button
+                                onClick={() => goTo(activeCurrent - 1)}
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-[#534AB7] transition-all duration-200 hover:border-[#534AB7] hover:bg-[#534AB7] hover:text-white"
+                                aria-label="Previous products"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    className="h-4 w-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2.4"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="m15 18-6-6 6-6" />
+                                </svg>
+                            </button>
+
+                            <div className="flex items-center gap-1.5">
+                                {Array.from({ length: maxSlide + 1 }).map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => goTo(index)}
+                                        className="h-1.5 rounded-full transition-all duration-300"
+                                        style={{
+                                            width: index === activeCurrent ? 22 : 6,
+                                            background: index === activeCurrent ? "#534AB7" : "#DDD",
+                                            borderRadius: index === activeCurrent ? 3 : "50%",
+                                        }}
+                                        aria-label={`Go to product slide ${index + 1}`}
+                                    />
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={() => goTo(activeCurrent + 1)}
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-[#534AB7] transition-all duration-200 hover:border-[#534AB7] hover:bg-[#534AB7] hover:text-white"
+                                aria-label="Next products"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    className="h-4 w-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2.4"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
+                            </button>
+                        </div>
+                    </>
+                ) : (
+                    <div className="text-center py-8">
+                        <p className="text-slate-500">No products available at the moment.</p>
+                    </div>
+                )}
             </div>
         </section>
     );

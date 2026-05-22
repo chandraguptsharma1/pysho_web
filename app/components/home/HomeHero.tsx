@@ -2,49 +2,41 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { defaultHeroData, fetchHero, type HeroData } from "./services/hero.service";
 
-const mobileSlides = [
-  { src: "/slider/slider1.png", label: "Precision Psychology Lab Setup" },
-  { src: "/slider/slider2.png", label: "Measurement and Calibration Tools" },
-  { src: "/slider/slider3.png", label: "Steadiness and Motor Skill Apparatus" },
-  { src: "/slider/slider4.png", label: "Reaction Time and Response Instruments" },
-  { src: "/slider/slider5.png", label: "Learning and Cognitive Assessment Tools" },
-  { src: "/slider/slider6.png", label: "Memory and Research Equipment" },
-];
-
-function MobileHeroSlider() {
+function MobileHeroSlider({ slides }: { slides: HeroData["mobileSlides"] }) {
   const [current, setCurrent] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const autoRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const total = mobileSlides.length;
+  const total = slides.length;
 
   const goTo = (index: number) => {
     setCurrent((index + total) % total);
     setDragOffset(0);
   };
 
-  const stopAuto = useCallback(() => {
+  const stopAuto = () => {
     if (autoRef.current) {
       clearInterval(autoRef.current);
       autoRef.current = null;
     }
-  }, []);
+  };
 
-  const startAuto = useCallback(() => {
+  const startAuto = () => {
     stopAuto();
     autoRef.current = setInterval(() => {
       setCurrent((value) => (value + 1) % total);
     }, 3200);
-  }, [stopAuto, total]);
+  };
 
   useEffect(() => {
     startAuto();
     return () => stopAuto();
-  }, [startAuto, stopAuto]);
+  }, [total]);
 
   const onTouchStart = (event: React.TouchEvent) => {
     touchStartX.current = event.touches[0].clientX;
@@ -95,10 +87,10 @@ function MobileHeroSlider() {
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
         >
-          {mobileSlides.map((slide, index) => (
-            <div key={slide.src} className="relative h-[72svh] w-full flex-shrink-0">
+          {slides.map((slide, index) => (
+            <div key={slide.imageUrl} className="relative h-[72svh] w-full flex-shrink-0">
               <Image
-                src={slide.src}
+                src={slide.imageUrl}
                 alt={slide.label}
                 fill
                 priority={index === 0}
@@ -128,9 +120,9 @@ function MobileHeroSlider() {
 
         <div className="absolute bottom-8 left-6 right-6 flex items-center justify-between">
           <div className="flex gap-2">
-            {mobileSlides.map((slide, index) => (
+            {slides.map((slide, index) => (
               <button
-                key={slide.src}
+                key={slide.imageUrl}
                 type="button"
                 onClick={() => {
                   goTo(index);
@@ -156,42 +148,51 @@ function MobileHeroSlider() {
   );
 }
 
-function DesktopHero() {
+function DesktopHero({ hero }: { hero: HeroData }) {
   return (
     <section className="relative hidden overflow-hidden bg-[#071323] text-white md:block">
       <div className="absolute inset-0">
         <Image
-          src="/hero-desktop-reference.png"
-          alt="Psychology laboratory instruments"
+          src={hero.desktopImageUrl}
+          alt={hero.desktopImageAlt}
           fill
           priority
           className="object-cover"
-          sizes="100vw"
+          sizes="(min-width: 768px) 100vw, 0px"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#04101f]/92 via-[#06162b]/78 to-[#06162b]/10" />
       </div>
 
       <div className="relative mx-auto flex min-h-[520px] max-w-7xl items-center px-6 py-16 lg:px-10">
         <div className="max-w-[520px]">
-          <h1 className="text-4xl font-extrabold leading-[1.08] tracking-normal md:text-5xl">
-            Engineering Precision for{" "}
-            <span className="text-[#4b8dff]">Psychological Science</span>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#7fb5ff]">
+            {hero.eyebrow}
+          </p>
+          <h1 className="mt-4 text-4xl font-extrabold leading-[1.08] tracking-normal md:text-5xl">
+            {hero.title.split(hero.highlight).map((part, i, arr) => (
+              <span key={i}>
+                {part}
+                {i < arr.length - 1 && (
+                  <span className="text-[#4b8dff]">{hero.highlight}</span>
+                )}
+              </span>
+            ))}
           </h1>
           <p className="mt-5 max-w-md text-[15px] leading-7 text-slate-200">
-            Over 45 years of excellence in manufacturing high-performance psychology apparatus for education and research.
+            {hero.description}
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
-              href="/products"
+              href={hero.ctaPrimaryHref}
               className="rounded-md bg-[#1266d6] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-blue-950/30 transition hover:bg-[#0f58bb]"
             >
-              Explore Products
+              {hero.ctaPrimaryText}
             </Link>
             <Link
-              href="/contact"
+              href={hero.ctaSecondaryHref}
               className="rounded-md border border-white/35 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10"
             >
-              Contact Us
+              {hero.ctaSecondaryText}
             </Link>
           </div>
         </div>
@@ -201,10 +202,16 @@ function DesktopHero() {
 }
 
 export default function HomeHero() {
+  const [hero, setHero] = useState<HeroData>(defaultHeroData);
+
+  useEffect(() => {
+    fetchHero().then(setHero).catch(() => {});
+  }, []);
+
   return (
     <>
-      <MobileHeroSlider />
-      <DesktopHero />
+      <MobileHeroSlider slides={hero.mobileSlides} />
+      <DesktopHero hero={hero} />
     </>
   );
 }

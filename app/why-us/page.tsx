@@ -1,115 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { defaultWhyUsData, fetchWhyUs, type WhyUsSection } from "./services/whyUs.service";
 
 export const metadata: Metadata = {
     title: "Why Choose Us | Vishwakarma PsyTech Labs",
     description: "Why institutions choose Vishwakarma PsyTech Labs for psychology lab equipment, custom apparatus, and reliable support.",
 };
 
-type WhyUsStat = {
-    value: string;
-    label: string;
-};
-
-type WhyUsReason = {
-    title: string;
-    text: string;
-    isActive: boolean;
-};
-
-type WhyUsSection = {
-    eyebrow: string;
-    title: string;
-    description: string;
-    stats: WhyUsStat[];
-    reasons: WhyUsReason[];
-    ctaText: string;
-    ctaLabel: string;
-    ctaHref: string;
-    isActive: boolean;
-};
-
-type WhyUsResponse = {
-    whyUs?: Partial<WhyUsSection>;
-    whyChooseUs?: Partial<WhyUsSection>;
-    data?: {
-        whyUs?: Partial<WhyUsSection>;
-        whyChooseUs?: Partial<WhyUsSection>;
-        data?: {
-            whyUs?: Partial<WhyUsSection>;
-            whyChooseUs?: Partial<WhyUsSection>;
-        };
-    };
-};
-
-const defaultWhyUs: WhyUsSection = {
-    eyebrow: "Why Choose Us",
-    title: "Built for labs. Backed by quality.",
-    description: "We focus on dependable apparatus, direct pricing, safe dispatch, and support that makes procurement easier for institutions.",
-    stats: [
-        { value: "30+", label: "Years Experience" },
-        { value: "500+", label: "Institutions Served" },
-        { value: "100%", label: "Quality Focus" },
-    ],
-    reasons: [
-        { title: "Quality Manufacturing", text: "Durable psychology lab equipment made with practical lab use in mind.", isActive: true },
-        { title: "Factory Direct Price", text: "Direct supply helps institutions get fair pricing for regular and bulk orders.", isActive: true },
-        { title: "Custom Apparatus", text: "Product modification and specific dimensions can be supported on request.", isActive: true },
-        { title: "Pan India Delivery", text: "Wardha location helps us dispatch efficiently across India.", isActive: true },
-        { title: "Secure Packaging", text: "Careful packing keeps instruments protected during transport.", isActive: true },
-        { title: "After-Sales Support", text: "Quick help for product guidance, order updates, and support needs.", isActive: true },
-    ],
-    ctaText: "Need reliable psychology lab equipment for your institution?",
-    ctaLabel: "Get a Quote",
-    ctaHref: "/contact",
-    isActive: true,
-};
-
-function normalizeWhyUs(whyUs?: Partial<WhyUsSection> | null): WhyUsSection {
-    if (!whyUs) return defaultWhyUs;
-
-    return {
-        ...defaultWhyUs,
-        ...whyUs,
-        stats: Array.isArray(whyUs.stats) && whyUs.stats.length ? whyUs.stats : defaultWhyUs.stats,
-        reasons: Array.isArray(whyUs.reasons) && whyUs.reasons.length
-            ? whyUs.reasons.map((reason, index) => ({
-                ...defaultWhyUs.reasons[index % defaultWhyUs.reasons.length],
-                ...reason,
-                isActive: typeof reason.isActive === "boolean" ? reason.isActive : true,
-            }))
-            : defaultWhyUs.reasons,
-        isActive: typeof whyUs.isActive === "boolean" ? whyUs.isActive : true,
-    };
-}
-
-function whyUsFromResponse(data: WhyUsResponse): WhyUsSection {
-    return normalizeWhyUs(
-        data.whyUs ||
-        data.whyChooseUs ||
-        data.data?.whyUs ||
-        data.data?.whyChooseUs ||
-        data.data?.data?.whyUs ||
-        data.data?.data?.whyChooseUs
-    );
-}
-
-async function getWhyUs(): Promise<WhyUsSection> {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
-
-    try {
-        const response = await fetch(`${baseUrl}/why-us`, { cache: "no-store" });
-        if (!response.ok) return defaultWhyUs;
-
-        const data = (await response.json()) as WhyUsResponse;
-        return whyUsFromResponse(data);
-    } catch {
-        return defaultWhyUs;
-    }
-}
-
 export default async function WhyUsPage() {
-    const whyUs = await getWhyUs();
+    const whyUs: WhyUsSection = await fetchWhyUs();
     const activeReasons = whyUs.reasons.filter((reason) => reason.isActive);
 
     return (

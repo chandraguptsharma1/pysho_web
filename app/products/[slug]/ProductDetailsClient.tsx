@@ -3,28 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-type Product = {
-    slug: string;
-    name: string;
-    cat: string;
-    mat: "wood" | "metal" | "paper" | "cloth" | "electronic";
-    price: number;
-    unit: string;
-    moq: number;
-    imagePlaceholder: string;
-    icon: string;
-    description?: string;
-    specs: Record<string, string>;
-};
-
-function formatINR(n: number) {
-    return new Intl.NumberFormat("en-IN", {
-        style: "currency",
-        currency: "INR",
-        maximumFractionDigits: 0,
-    }).format(n);
-}
+import { type Product } from "../../lib/api";
 
 const matBadge: Record<string, { bg: string; text: string; label: string }> = {
     wood: { bg: "bg-emerald-50", text: "text-emerald-700", label: "Wood" },
@@ -32,6 +11,7 @@ const matBadge: Record<string, { bg: string; text: string; label: string }> = {
     paper: { bg: "bg-amber-50", text: "text-amber-700", label: "Paper-Pencil" },
     cloth: { bg: "bg-pink-50", text: "text-pink-700", label: "Cloth" },
     electronic: { bg: "bg-indigo-50", text: "text-indigo-700", label: "Electronic" },
+    cardboard: { bg: "bg-amber-50", text: "text-amber-700", label: "Cardboard" },
 };
 
 // Default FAQs (you can override by adding product.faqs if you extend the type later)
@@ -54,17 +34,25 @@ const DEFAULT_FAQS = [
     },
 ];
 
-type Props = {
-    product: Product;
-};
-
-export default function ProductDetailsClient({ product }: Props) {
+export default function ProductDetailsClient({ product }: { product: Product }) {
     const [quoteOpen, setQuoteOpen] = useState(false);
     const [imgError, setImgError] = useState(false);
     const [activeFaq, setActiveFaq] = useState<number | null>(0);
-    const [qty, setQty] = useState<number>(product.moq || 1);
+    const [qty, setQty] = useState<number>(parseInt(product.moq) || 1);
 
-    const badge = matBadge[product.mat];
+    const specs: Record<string, string> = {};
+    if (product.equipmentType) specs["Equipment Type"] = product.equipmentType;
+    if (product.application) specs["Application"] = product.application;
+    if (product.automationGrade) specs["Automation Grade"] = product.automationGrade;
+    if (product.color) specs["Color"] = product.color;
+    if (product.condition) specs["Condition"] = product.condition;
+    if (product.material) specs["Material"] = product.material;
+    if (product.shape) specs["Shape"] = product.shape;
+    if (product.size) specs["Size"] = product.size;
+    if (product.technology) specs["Technology"] = product.technology;
+    if (product.treatmentType) specs["Treatment Type"] = product.treatmentType;
+
+    const badge = matBadge[product.material?.toLowerCase()] || matBadge.cardboard || { bg: "bg-gray-100", text: "text-gray-700", label: product.material || "Other" };
 
     return (
         <div className="bg-[#f6f5fb] font-sans">
@@ -114,7 +102,7 @@ export default function ProductDetailsClient({ product }: Props) {
 
                             {!imgError ? (
                                 <Image
-                                    src={product.imagePlaceholder}
+                                    src={product.images[0] || "/placeholder.png"}
                                     alt={product.name}
                                     fill
                                     className="object-contain p-8"
@@ -123,12 +111,9 @@ export default function ProductDetailsClient({ product }: Props) {
                                 />
                             ) : (
                                 <div className="flex h-full flex-col items-center justify-center gap-4 text-gray-300">
-                                    <span className="text-8xl drop-shadow-sm">{product.icon}</span>
+                                    <span className="text-8xl drop-shadow-sm">📋</span>
                                     <p className="text-xs text-gray-400">
-                                        Place image at{" "}
-                                        <code className="font-mono">
-                                            public{product.imagePlaceholder}
-                                        </code>
+                                        Image not available
                                     </p>
                                 </div>
                             )}
@@ -146,14 +131,14 @@ export default function ProductDetailsClient({ product }: Props) {
                                 >
                                     {i === 0 && !imgError ? (
                                         <Image
-                                            src={product.imagePlaceholder}
+                                            src={product.images[0] || "/placeholder.png"}
                                             alt=""
                                             width={72}
                                             height={72}
                                             className="h-full w-full object-contain"
                                         />
                                     ) : (
-                                        <span className="text-2xl opacity-40">{product.icon}</span>
+                                        <span className="text-2xl opacity-40">📋</span>
                                     )}
                                 </button>
                             ))}
@@ -165,7 +150,7 @@ export default function ProductDetailsClient({ product }: Props) {
                         {/* Kicker */}
                         <div className="mb-4 inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[2px] text-indigo-600">
                             <span className="inline-block h-px w-7 bg-indigo-500" />
-                            {product.cat}
+                            {product.category}
                         </div>
 
                         {/* Title */}
@@ -200,11 +185,11 @@ export default function ProductDetailsClient({ product }: Props) {
                                         <span className="text-base font-medium text-indigo-600">₹</span>
                                         {new Intl.NumberFormat("en-IN").format(product.price)}
                                         <span className="ml-2 font-sans text-xs font-normal text-gray-500">
-                                            / {product.unit}
+                                            / Piece
                                         </span>
                                     </p>
                                     <p className="mt-2 text-xs text-gray-500">
-                                        MOQ: {product.moq} {product.unit} · GST extra
+                                        MOQ: {product.moq} Piece{product.gstExtra ? " · GST extra" : ""}
                                     </p>
                                 </div>
                                 <div className="text-right">
@@ -212,7 +197,7 @@ export default function ProductDetailsClient({ product }: Props) {
                                         Delivery
                                     </p>
                                     <p className="mt-1 text-sm font-semibold text-gray-900">
-                                        4 – 5 days
+                                        {product.deliveryTime || "4 – 5 days"}
                                     </p>
                                     <p className="text-xs text-gray-500">All India</p>
                                 </div>
@@ -352,7 +337,7 @@ export default function ProductDetailsClient({ product }: Props) {
                     </div>
 
                     <div className="grid overflow-hidden rounded-2xl border border-gray-200 md:grid-cols-2">
-                        {Object.entries(product.specs ?? {}).map(([key, val], i, arr) => {
+                        {Object.entries(specs).map(([key, val], i, arr) => {
                             const isLastLeft = i === arr.length - 2 && arr.length % 2 === 0;
                             const isLast = i === arr.length - 1;
                             return (
@@ -385,14 +370,14 @@ export default function ProductDetailsClient({ product }: Props) {
                             <div className="grid aspect-square place-items-center rounded-xl bg-gradient-to-br from-indigo-50 via-violet-50 to-white">
                                 {!imgError ? (
                                     <Image
-                                        src={product.imagePlaceholder}
+                                        src={product.images[0] || "/placeholder.png"}
                                         alt=""
                                         width={360}
                                         height={360}
                                         className="h-4/5 w-4/5 object-contain"
                                     />
                                 ) : (
-                                    <span className="text-8xl opacity-80">{product.icon}</span>
+                                    <span className="text-8xl opacity-80">📋</span>
                                 )}
                             </div>
                         </div>
@@ -444,7 +429,7 @@ export default function ProductDetailsClient({ product }: Props) {
                         {[
                             {
                                 lb: "Minimum Order",
-                                vl: `${product.moq} ${product.unit}`,
+                                vl: `${product.moq} Piece`,
                                 dsc: "Small pilot orders welcome for institutions.",
                                 ic: (
                                     <path
@@ -455,7 +440,7 @@ export default function ProductDetailsClient({ product }: Props) {
                             },
                             {
                                 lb: "Supply Ability",
-                                vl: "10 Pieces / month",
+                                vl: product.supplyAbility || "10 Pieces / month",
                                 dsc: "Scale pricing available on bulk requests.",
                                 ic: (
                                     <path
@@ -466,7 +451,7 @@ export default function ProductDetailsClient({ product }: Props) {
                             },
                             {
                                 lb: "Delivery Time",
-                                vl: "4 – 5 Days",
+                                vl: product.deliveryTime || "4 – 5 Days",
                                 dsc: "Dispatched within 24 hours of confirmation.",
                                 ic: (
                                     <path
@@ -546,7 +531,7 @@ export default function ProductDetailsClient({ product }: Props) {
                     </div>
 
                     <div className="space-y-2.5">
-                        {DEFAULT_FAQS.map((f, i) => {
+                        {(product.faqs || DEFAULT_FAQS).map((f, i) => {
                             const open = activeFaq === i;
                             return (
                                 <div
@@ -565,7 +550,7 @@ export default function ProductDetailsClient({ product }: Props) {
                                                 0{i + 1}
                                             </span>
                                             <span className="font-semibold text-gray-900">
-                                                {f.q}
+                                                {f.question}
                                             </span>
                                         </div>
                                         <span
@@ -597,7 +582,7 @@ export default function ProductDetailsClient({ product }: Props) {
                                     >
                                         <div className="overflow-hidden">
                                             <p className="px-6 pb-5 text-[14.5px] leading-[1.75] text-gray-600">
-                                                {f.a}
+                                                {f.answer}
                                             </p>
                                         </div>
                                     </div>

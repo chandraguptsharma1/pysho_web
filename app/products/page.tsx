@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import { products, type Material } from "./productData";
+import { fetchProducts, type Product } from "../lib/api";
 
 // ── Reusable image component with emoji fallback ──────────────────────────────
 function ImageWithFallback({ src, alt, fallback }: { src: string; alt: string; fallback: string }) {
@@ -29,6 +27,8 @@ function ImageWithFallback({ src, alt, fallback }: { src: string; alt: string; f
         />
     );
 }
+
+type Material = "wood" | "metal" | "paper" | "electronic" | "cloth";
 
 type FilterType = Material | "all";
 
@@ -58,13 +58,33 @@ function formatINR(n: number) {
 }
 
 export default function ProductsPage() {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
     const [active, setActive] = useState<FilterType>("all");
 
+    useEffect(() => {
+        fetchProducts()
+            .then(setProducts)
+            .catch(console.error)
+            .finally(() => setLoading(false));
+    }, []);
+
     const filtered =
-        active === "all" ? products : products.filter((p) => p.mat === active);
+        active === "all" ? products : products.filter((p) => p.material?.toLowerCase() === active);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-20">
+                <div className="text-center">
+                    <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent mx-auto"></div>
+                    <p className="text-slate-600">Loading products...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <main className="min-h-screen bg-slate-50">
+        <>
 
 
             {/* ── Hero ── */}
@@ -125,7 +145,8 @@ export default function ProductsPage() {
             {/* ── Product Grid ── */}
             <div className="grid grid-cols-1 bg-slate-100 gap-px sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {filtered.map((p) => {
-                    const badge = matBadge[p.mat];
+                    const materialKey = p.material?.toLowerCase() as Material;
+                    const badge = matBadge[materialKey] || { bg: "bg-gray-100", text: "text-gray-700", label: p.material || "Other" };
                     return (
                         <Link
                             key={p.slug}
@@ -145,9 +166,9 @@ export default function ProductsPage() {
                             */}
                             <div className="relative flex w-32 shrink-0 items-center justify-center overflow-hidden bg-slate-50 border-r border-slate-100 sm:w-full sm:border-r-0 sm:border-b sm:aspect-square">
                                 <ImageWithFallback
-                                    src={p.imagePlaceholder}
+                                    src={p.images[0] || "/placeholder.png"}
                                     alt={p.name}
-                                    fallback={p.icon}
+                                    fallback="📋"
                                 />
                             </div>
 
@@ -157,17 +178,17 @@ export default function ProductsPage() {
                                     <p className="text-[13px] font-medium leading-snug text-slate-800 transition-colors group-hover:text-blue-600">
                                         {p.name}
                                     </p>
-                                    <p className="mt-0.5 text-[11px] text-slate-400">{p.cat}</p>
+                                    <p className="mt-0.5 text-[11px] text-slate-400">{p.category}</p>
                                 </div>
 
                                 <p className="mt-1 font-serif text-lg font-semibold text-slate-900">
-                                    {formatINR(p.price)}
+                                    {formatINR(p.price || 0)}
                                     <span className="ml-1 font-sans text-[10px] font-normal text-slate-400">
-                                        / {p.unit}
+                                        / Piece
                                     </span>
                                 </p>
 
-                                <p className="text-[10px] text-slate-300">MOQ: {p.moq} {p.unit}</p>
+                                <p className="text-[10px] text-slate-300">MOQ: {p.moq || 1} Piece</p>
 
                                 <span className="mt-1 text-[11px] font-medium text-blue-600 group-hover:underline">
                                     View details →
@@ -202,8 +223,6 @@ export default function ProductsPage() {
                     </a>
                 </div>
             </div>
-
-
-        </main>
+        </>
     );
 }

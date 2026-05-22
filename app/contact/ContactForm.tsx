@@ -1,6 +1,8 @@
 "use client";
 
+import type { FormEvent } from "react";
 import { useState } from "react";
+import { createContactInquiry } from "./services/contactInquiry.service";
 
 type ContactFormContent = {
     eyebrow: string;
@@ -12,14 +14,40 @@ type ContactFormContent = {
 
 export default function ContactForm({ content, inquiryTypes }: { content: ContactFormContent; inquiryTypes: string[] }) {
     const [submitted, setSubmitted] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    async function submitInquiry(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        setSubmitting(true);
+        setSubmitted(false);
+        setError(null);
+
+        const formData = new FormData(form);
+        const payload = {
+            name: String(formData.get("name") || ""),
+            mobile: String(formData.get("mobile") || ""),
+            email: String(formData.get("email") || ""),
+            inquiryType: String(formData.get("inquiryType") || ""),
+            message: String(formData.get("message") || ""),
+        };
+
+        try {
+            await createContactInquiry(payload);
+            form.reset();
+            setSubmitted(true);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Inquiry submit nahi hui");
+        } finally {
+            setSubmitting(false);
+        }
+    }
 
     return (
         <form
             className="rounded-2xl border border-slate-200 bg-white p-4"
-            onSubmit={(event) => {
-                event.preventDefault();
-                setSubmitted(true);
-            }}
+            onSubmit={submitInquiry}
         >
             <div className="mb-3">
                 <p className="text-[11px] font-semibold uppercase tracking-[2px] text-blue-600">
@@ -102,9 +130,10 @@ export default function ContactForm({ content, inquiryTypes }: { content: Contac
 
             <button
                 type="submit"
+                disabled={submitting}
                 className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_16px_32px_-18px_rgba(29,78,216,0.8)] transition hover:-translate-y-0.5 hover:bg-blue-600"
             >
-                {content.submitLabel}
+                {submitting ? "Submitting..." : content.submitLabel}
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path
                         d="M5 12h14m-6-6 6 6-6 6"
@@ -119,6 +148,12 @@ export default function ContactForm({ content, inquiryTypes }: { content: Contac
             {submitted && (
                 <p className="mt-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
                     {content.successMessage}
+                </p>
+            )}
+
+            {error && (
+                <p className="mt-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700">
+                    {error}
                 </p>
             )}
         </form>

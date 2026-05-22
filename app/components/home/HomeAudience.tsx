@@ -1,9 +1,4 @@
-const serve = [
-  ["Universities & Colleges", "M3 20h18M6 20V9l6-4 6 4v11M8 12h2M14 12h2"],
-  ["Research Institutions", "M10 2v6L5 19h14l-5-11V2M8 2h8"],
-  ["Psychology Labs", "M12 4a4 4 0 0 0-4 4v1H7a4 4 0 1 0 4 4h2a4 4 0 1 0 4-4h-1V8a4 4 0 0 0-4-4Z"],
-  ["Educational Institutes", "M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5Z"],
-];
+import { homeAudience } from "./services/homeAudience.service";
 
 export default function HomeAudience() {
   return (
@@ -13,7 +8,7 @@ export default function HomeAudience() {
           Who We Serve
         </p>
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {serve.map(([label, path]) => (
+          {homeAudience.cards.map(([label, path]) => (
             <div key={label} className="text-center">
               <svg
                 viewBox="0 0 24 24"
@@ -36,12 +31,12 @@ export default function HomeAudience() {
           What Our Clients Say
         </p>
         <blockquote className="mt-6 text-sm leading-7 text-slate-600">
-          The quality and accuracy of the instruments from Vishwakarma PsyTech Labs are outstanding. Highly reliable for academics and research use.
+          {homeAudience.testimonial.quote}
         </blockquote>
         <p className="mt-4 text-xs font-bold text-slate-900">
-          Head of Psychology Department
+          {homeAudience.testimonial.author}
         </p>
-        <p className="text-xs text-slate-500">Leading University</p>
+        <p className="text-xs text-slate-500">{homeAudience.testimonial.role}</p>
       </div>
     </section>
   );

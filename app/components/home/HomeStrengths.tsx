@@ -1,19 +1,19 @@
 import Image from "next/image";
+import { fetchHomeAbout, type HomeAboutData } from "./services/homeAbout.service";
 
-const strengths = [
-  "Engineering excellence in every product",
-  "Deep understanding of psychological research needs",
-  "High accuracy and consistent performance",
-  "Scalable manufacturing capabilities",
-  "Continuous innovation and improvement",
-];
+export default async function HomeStrengths() {
+  const {
+    strengthsEyebrow,
+    strengths,
+    strengthsImageSrc,
+    strengthsImageAlt,
+  }: HomeAboutData = await fetchHomeAbout();
 
-export default function HomeStrengths() {
   return (
     <section className="mx-auto grid max-w-6xl gap-8 px-6 py-12 md:grid-cols-2 lg:px-10">
       <div>
         <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#2166ad]">
-          Our Strengths
+          {strengthsEyebrow}
         </p>
         <ul className="mt-5 space-y-3 text-sm text-slate-600">
           {strengths.map((item) => (
@@ -36,8 +36,8 @@ export default function HomeStrengths() {
       </div>
       <div className="relative min-h-[210px] overflow-hidden rounded-md">
         <Image
-          src="/strengths-blueprint.png"
-          alt="Precision measurement tools"
+          src={strengthsImageSrc}
+          alt={strengthsImageAlt}
           fill
           className="object-cover"
           sizes="(min-width: 768px) 50vw, 100vw"

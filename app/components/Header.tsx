@@ -2,18 +2,25 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Products", href: "/products" },
-  { label: "Research & Solutions", href: "/why-us" },
+  { label: "Why Choose Us", href: "/why-us" },
   { label: "Contact", href: "/contact" },
 ];
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  function isActiveLink(href: string) {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#061323] text-white shadow-lg shadow-slate-950/30">
@@ -28,12 +35,20 @@ export default function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex">
-          {navLinks.map((item) => (
-            <Link key={item.href} href={item.href} className="relative text-sm font-semibold text-slate-200 transition hover:text-[#4b8dff]">
-              {item.label}
-              {item.href === "/" && <span className="absolute -bottom-4 left-0 h-0.5 w-full rounded-full bg-[#4b8dff]" />}
-            </Link>
-          ))}
+          {navLinks.map((item) => {
+            const active = isActiveLink(item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`relative text-sm font-semibold transition hover:text-[#4b8dff] ${active ? "text-white" : "text-slate-200"}`}
+              >
+                {item.label}
+                {active && <span className="absolute -bottom-4 left-0 h-0.5 w-full rounded-full bg-[#4b8dff]" />}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -68,16 +83,20 @@ export default function Header() {
       {menuOpen && (
         <nav className="border-t border-white/10 bg-[#071323] px-5 py-4 lg:hidden">
           <div className="mx-auto flex max-w-7xl flex-col gap-1">
-            {navLinks.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className="rounded-md px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navLinks.map((item) => {
+              const active = isActiveLink(item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`rounded-md px-4 py-3 text-sm font-semibold hover:bg-white/10 ${active ? "bg-white/10 text-white" : "text-slate-200"}`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
             <Link href="/contact" onClick={() => setMenuOpen(false)} className="mt-2 rounded-md bg-[#1266d6] px-4 py-3 text-center text-sm font-bold text-white">
               Get Quote
             </Link>
