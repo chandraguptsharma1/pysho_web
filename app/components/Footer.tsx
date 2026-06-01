@@ -29,8 +29,7 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <Image src="/logo-icon.png" alt="Vishwakarma PsyTech Labs" width={42} height={42} className="h-11 w-11 object-contain" />
             <div>
-              <p className="text-sm font-extrabold uppercase leading-none tracking-wide">Vishwakarma</p>
-              <p className="mt-1 text-xs font-bold text-slate-200">PsyTech Labs</p>
+              <p className="text-sm font-extrabold uppercase leading-tight tracking-wide">Vishwakarma PsyTech Labs</p>
             </div>
           </div>
           <p className="mt-4 max-w-xs text-sm leading-6 text-slate-400">

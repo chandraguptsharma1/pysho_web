@@ -28,8 +28,7 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-3">
           <Image src="/logo-icon.png" alt="Vishwakarma PsyTech Labs" width={44} height={44} priority className="h-11 w-11 object-contain" />
           <div>
-            <p className="text-[16px] font-extrabold uppercase leading-none tracking-wide">Vishwakarma</p>
-            <p className="mt-1 text-[12px] font-bold leading-none text-slate-200">PsyTech Labs</p>
+            <p className="text-[14px] font-extrabold uppercase leading-tight tracking-wide sm:text-[16px]">Vishwakarma PsyTech Labs</p>
             <p className="mt-1 hidden text-[9px] font-semibold tracking-[0.18em] text-slate-400 sm:block">Precision. Reliability. Excellence.</p>
           </div>
         </Link>

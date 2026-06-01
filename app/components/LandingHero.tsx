@@ -241,7 +241,7 @@ export default function Hero() {
                                 className="h-a2 mb-3 font-extrabold leading-[1.05]"
                                 style={{ fontSize: "clamp(24px,6vw,46px)", color: "#4f46e5" }}
                             >
-                                PsyTech Labs
+                                Vishwakarma PsyTech Labs
                             </h2>
                             <p
                                 className="h-a3 mb-1 text-[14px] font-bold lg:text-[15px]"

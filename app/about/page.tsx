@@ -30,8 +30,7 @@ async function AboutPageContent() {
                                     />
                                 </div>
                                 <div>
-                                    <p className="text-lg font-bold">Vishwakarma</p>
-                                    <p className="text-sm font-semibold text-blue-200">PsyTech Labs</p>
+                                    <p className="text-lg font-bold leading-tight">Vishwakarma PsyTech Labs</p>
                                 </div>
                             </div>
 
