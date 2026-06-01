@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "../../lib/config";
+
 export type AboutMetric = {
   value: string;
   label: string;
@@ -26,8 +28,6 @@ export type AboutData = {
   strengths: AboutStrength[];
   isActive: boolean;
 };
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export const defaultAboutData: AboutData = {
   eyebrow: "About Psychoscan",

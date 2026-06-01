@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ContactForm from "./ContactForm";
+import { API_BASE_URL } from "../lib/config";
 
 export const metadata: Metadata = {
     title: "Contact Us | Vishwakarma PsyTech Labs",
@@ -121,10 +122,8 @@ function contactFromResponse(data: ContactResponse): ContactDetails {
 }
 
 async function getContactDetails(): Promise<ContactDetails> {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
-
     try {
-        const response = await fetch(`${baseUrl}/contact-details`, { cache: "no-store" });
+        const response = await fetch(`${API_BASE_URL}/contact-details`, { cache: "no-store" });
         if (!response.ok) return defaultContact;
 
         const data = (await response.json()) as ContactResponse;
