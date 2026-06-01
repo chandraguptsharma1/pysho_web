@@ -1,8 +1,28 @@
+import type { ComponentProps } from "react";
+
 import HomeLineIcon from "./HomeLineIcon";
 import { getHomeWhyUs } from "./services/Homewhyus.service";
 
+type HomeCommitmentIcon = NonNullable<ComponentProps<typeof HomeLineIcon>["type"]>;
+
+interface HomeCommitmentCard {
+  _id?: string;
+  icon: HomeCommitmentIcon;
+  title: string;
+  description: string;
+}
+
+interface HomeCommitmentData {
+  isActive: boolean;
+  eyebrow: string;
+  title: string;
+  subtitle?: string;
+  cards?: HomeCommitmentCard[] | null;
+}
+
 export default async function HomeCommitment() {
-  const data = await getHomeWhyUs();
+  const data = (await getHomeWhyUs()) as HomeCommitmentData;
+  const cards: HomeCommitmentCard[] = data.cards ?? [];
 
   if (!data.isActive) return null;
 
@@ -20,7 +40,7 @@ export default async function HomeCommitment() {
         </p>
       )}
       <div className="mt-8 grid overflow-hidden border border-slate-200 bg-white shadow-[0_8px_20px_rgba(15,23,42,0.04)] md:grid-cols-4">
-        {data.cards.map((item, index) => (
+        {cards.map((item: HomeCommitmentCard, index: number) => (
           <div
             key={item._id || item.title}
             className={`min-h-[148px] p-6 ${index % 4 !== 3 ? "md:border-r" : ""
